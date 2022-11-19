@@ -1,0 +1,399 @@
+Assignment No 2A
+Create following tables in MYSQL  
+
+Employee( Emp_id, Dept_id, fname, lname, designation, salary,JoinDate)
+Dept ( Dept_id, dname,dlocation )
+Project( Proj_id,Dept_id ,Pname,Plocation,Pcost,Pyear)
+
+mysql> create table Employee(E_id int(5) not null,D_id int(5) not null,E_Fname varchar(15),E_Lname varchar(15),Designation varchar(20), Salary
+int, primary key(E_id), foreign key (D_id) references Department(D_id));
+Query OK, 0 rows affected (0.04 sec)
+
+mysql> create table Department(D_id int(5) not null,D_name varchar(15),D_location varchar(15), primary key(D_id));
+Query OK, 0 rows affected (0.05 sec)
+
+mysql> create table Project(P_id int(5) not null,D_id int(5) not null,P_name varchar(15),P_location varchar(15),P_cost int,P_year int);
+Query OK, 0 rows affected (0.05 sec)
+
+mysql> desc Department;
++------------+-------------+------+-----+---------+-------+
+| Field      | Type        | Null | Key | Default | Extra |
++------------+-------------+------+-----+---------+-------+
+| D_id       | int(5)      | NO   | PRI | NULL    |       |
+| D_name     | varchar(15) | YES  |     | NULL    |       |
+| D_location | varchar(15) | YES  |     | NULL    |       |
++------------+-------------+------+-----+---------+-------+
+3 rows in set (0.00 sec)
+
+mysql> desc Employee;
++-------------+-------------+------+-----+---------+-------+
+| Field       | Type        | Null | Key | Default | Extra |
++-------------+-------------+------+-----+---------+-------+
+| E_id        | int(5)      | NO   | PRI | NULL    |       |
+| D_id        | int(5)      | NO   | MUL | NULL    |       |
+| E_Fname     | varchar(15) | YES  |     | NULL    |       |
+| E_Lname     | varchar(15) | YES  |     | NULL    |       |
+| Designation | varchar(20) | YES  |     | NULL    |       |
+| Salary      | int(11)     | YES  |     | NULL    |       |
++-------------+-------------+------+-----+---------+-------+
+6 rows in set (0.00 sec)
+
+mysql> desc Project;
++------------+-------------+------+-----+---------+-------+
+| Field      | Type        | Null | Key | Default | Extra |
++------------+-------------+------+-----+---------+-------+
+| P_id       | int(5)      | NO   |     | NULL    |       |
+| D_id       | int(5)      | NO   |     | NULL    |       |
+| P_name     | varchar(15) | YES  |     | NULL    |       |
+| P_location | varchar(15) | YES  |     | NULL    |       |
+| P_cost     | int(11)     | YES  |     | NULL    |       |
+| P_year     | int(11)     | YES  |     | NULL    |       |
++------------+-------------+------+-----+---------+-------+
+6 rows in set (0.00 sec)
+
+mysql> alter table Project add primary key(P_id);
+Query OK, 0 rows affected (0.08 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> alter table Project add foreign key(D_id) references Department(D_id);
+Query OK, 0 rows affected (0.19 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> desc Project;
++------------+-------------+------+-----+---------+-------+
+| Field      | Type        | Null | Key | Default | Extra |
++------------+-------------+------+-----+---------+-------+
+| P_id       | int(5)      | NO   | PRI | NULL    |       |
+| D_id       | int(5)      | NO   | MUL | NULL    |       |
+| P_name     | varchar(15) | YES  |     | NULL    |       |
+| P_location | varchar(15) | YES  |     | NULL    |       |
+| P_cost     | int(11)     | YES  |     | NULL    |       |
+| P_year     | int(11)     | YES  |     | NULL    |       |
++------------+-------------+------+-----+---------+-------+
+6 rows in set (0.00 sec)
+
+mysql> insert into Department values(101,'Computer','Mumbai'),(102,'IT','Mumbai'),(202,'Computer','Pune'),(203,'IT','Pune'),(204,'ENTC','Pune'),(401,'Computer','Nashik'),(402,'IT','Nashik'),(403,'Mechanical','Nashik');
+Query OK, 8 rows affected (0.01 sec)
+Records: 8  Duplicates: 0  Warnings: 0
+
+mysql> select * from Department;
++------+------------+------------+
+| D_id | D_name     | D_location |
++------+------------+------------+
+|  101 | Computer   | Mumbai     |
+|  102 | IT         | Mumbai     |
+|  202 | Computer   | Pune       |
+|  203 | IT         | Pune       |
+|  204 | ENTC       | Pune       |
+|  401 | Computer   | Nashik     |
+|  402 | IT         | Nashik     |
+|  403 | Mechanical | Nashik     |
++------+------------+------------+
+8 rows in set (0.00 sec)
+
+mysql> insert into Employee values(1011,101,'Riya','Ansari','Tech Manager',68000),(2021,202,'Avnish','Kumar','Oper Manager',65000),(4011,401,'Naira', 'Bhatia','HR Manager',62000);
+Query OK, 3 rows affected (0.01 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+mysql> select * from Employee;
++------+------+---------+---------+--------------+--------+
+| E_id | D_id | E_Fname | E_Lname | Designation  | Salary |
++------+------+---------+---------+--------------+--------+
+| 1011 |  101 | Riya    | Ansari  | Tech Manager |  68000 |
+| 2021 |  202 | Avnish  | Kumar   | Oper Manager |  65000 |
+| 4011 |  401 | Naira   | Bhatia  | HR Manager   |  62000 |
++------+------+---------+---------+--------------+--------+
+3 rows in set (0.00 sec)
+
+mysql> alter table Employee add Join_date int(4) not null;
+Query OK, 3 rows affected (0.22 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+mysql> update Employee set Join_date=2015 where E_id=1011;
+Query OK, 1 row affected (0.03 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> update Employee set Join_date=2017 where E_id=2021;
+Query OK, 1 row affected (0.03 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> update Employee set Join_date=2014 where E_id=4011;
+Query OK, 1 row affected (0.03 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> insert into Employee values(1012,101,'Bhavesh','Makh','Team Leader',60000,2019),(1021,102,'Karan','Wagh','Tech Manager',69500,2013);
+Query OK, 2 rows affected (0.00 sec)
+Records: 2  Duplicates: 0  Warnings: 0
+
+mysql> insert into Employee values(4021,401,'Nikhil','Yadav','Region Manager',68000,2012),(4031,403,'Nikita','Kulkarni','Oper Manager',69500,2016);
+Query OK, 2 rows affected (0.01 sec)
+Records: 2  Duplicates: 0  Warnings: 0
+
+mysql> insert into Employee values(2031,203,'Aisha','Khurana','Legal Manager',66000,2014),(2041,204,'Rashi','Gupta','Region Manager',68000,2018);
+Query OK, 2 rows affected (0.09 sec)
+Records: 2  Duplicates: 0  Warnings: 0
+
+mysql> select * from Employee;
++------+------+---------+----------+----------------+--------+-----------+
+| E_id | D_id | E_Fname | E_Lname  | Designation    | Salary | Join_date |
++------+------+---------+----------+----------------+--------+-----------+
+| 1011 |  101 | Riya    | Ansari   | Tech Manager   |  68000 |      2015 |
+| 1012 |  101 | Bhavesh | Makh     | Team Leader    |  60000 |      2019 |
+| 1021 |  102 | Karan   | Wagh     | Tech Manager   |  69500 |      2013 |
+| 2021 |  202 | Avnish  | Kumar    | Oper Manager   |  65000 |      2017 |
+| 2031 |  203 | Aisha   | Khurana  | Legal Manager  |  66000 |      2014 |
+| 2041 |  204 | Rashi   | Gupta    | Region Manager |  68000 |      2018 |
+| 4011 |  401 | Naira   | Bhatia   | HR Manager     |  62000 |      2014 |
+| 4021 |  401 | Nikhil  | Yadav    | Region Manager |  68000 |      2012 |
+| 4031 |  403 | Nikita  | Kulkarni | Oper Manager   |  69500 |      2016 |
++------+------+---------+----------+----------------+--------+-----------+
+9 rows in set (0.00 sec)
+
+mysql> insert into Employee values(2022,202,'Rajat','Kakade','HR Manager',66500,2017),(4012,401,'Naksh','Sinha','Tech Manager',68500,2016);
+Query OK, 2 rows affected (0.02 sec)
+Records: 2  Duplicates: 0  Warnings: 0
+
+mysql> select * from Employee;
++------+------+---------+----------+----------------+--------+-----------+
+| E_id | D_id | E_Fname | E_Lname  | Designation    | Salary | Join_date |
++------+------+---------+----------+----------------+--------+-----------+
+| 1011 |  101 | Piya    | Ansari   | Tech Manager   |  74800 |      2015 |
+| 1012 |  101 | Bhavesh | Makh     | Team Leader    |  66000 |      2019 |
+| 1021 |  102 | Karan   | Wagh     | Tech Manager   |  76450 |      2013 |
+| 2021 |  202 | Avnish  | Kumar    | Oper Manager   |  71500 |      2017 |
+| 2022 |  202 | Rajat   | Kakade   | HR Manager     |  73150 |      2017 |
+| 2031 |  203 | Aisha   | Khurana  | Legal Manager  |  72600 |      2014 |
+| 2041 |  204 | Rashi   | Gupta    | Region Manager |  74800 |      2018 |
+| 4011 |  401 | Naira   | Bhatia   | HR Manager     |  68200 |      2014 |
+| 4012 |  401 | Naksh   | Sinha    | Tech Manager   |  75350 |      2016 |
+| 4021 |  402 | Nikhil  | Yadav    | Region Manager |  74800 |      2012 |
+| 4031 |  403 | Nikita  | Kulkarni | Oper Manager   |  76450 |      2016 |
++------+------+---------+----------+----------------+--------+-----------+
+11 rows in set (0.01 sec)
+
+mysql> update Employee set E_Fname='Piya' where E_id=1011;
+Query OK, 1 row affected (0.01 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> alter table Employee add constraint did foreign key(D_id) references Department(D_id) on delete cascade;
+Query OK, 11 rows affected (0.09 sec)
+Records: 11  Duplicates: 0  Warnings: 0
+
+mysql> insert into Project values(111,101,'Human VS AI','Mumbai',250000,2018),(112,102,'Data Anaylsis','Mumbai',120000,2005);
+Query OK, 2 rows affected (0.00 sec)
+Records: 2  Duplicates: 0  Warnings: 0
+
+mysql> insert into Project values(210,203,'Recognition Sys','Pune',350000,2019),(215,202,'E_Evaluation','Pune',320000,2004);
+Query OK, 2 rows affected (0.02 sec)
+Records: 2  Duplicates: 0  Warnings: 0
+
+mysql> insert into Project values(418,401,'Face Detection','Nashik',450000,2015),(421,403,'Sensor Manage','Nashik',620000,2007);
+Query OK, 2 rows affected (0.02 sec)
+Records: 2  Duplicates: 0  Warnings: 0
+
+ysql> update Employee set D_id=402 where E_id=4021;
+Query OK, 1 row affected (0.01 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> alter table Project add constraint d_id foreign key(D_id) references Department(D_id) on delete cascade;
+Query OK, 6 rows affected (0.07 sec)
+Records: 6  Duplicates: 0  Warnings: 0
+
+mysql> select * from Project;
++------+------+-----------------+------------+--------+--------+
+| P_id | D_id | P_name          | P_location | P_cost | P_year |
++------+------+-----------------+------------+--------+--------+
+|  111 |  101 | Human VS AI     | Mumbai     | 250000 |   2018 |
+|  112 |  102 | Data Anaylsis   | Mumbai     | 120000 |   2005 |
+|  210 |  203 | Recognition Sys | Pune       | 350000 |   2019 |
+|  215 |  202 | E_Evaluation    | Pune       | 320000 |   2004 |
+|  418 |  401 | Face Detection  | Nashik     | 450000 |   2015 |
+|  421 |  403 | Sensor Manage   | Nashik     | 620000 |   2007 |
++------+------+-----------------+------------+--------+--------+
+6 rows in set (0.01 sec)
+
+mysql> select * from Department where D_name='Computer' and D_name='IT';
+Empty set (0.00 sec)
+
+mysql> select * from Department;
++------+------------+------------+
+| D_id | D_name     | D_location |
++------+------------+------------+
+|  101 | Computer   | Mumbai     |
+|  102 | IT         | Mumbai     |
+|  202 | Computer   | Pune       |
+|  203 | IT         | Pune       |
+|  204 | ENTC       | Pune       |
+|  401 | Computer   | Nashik     |
+|  402 | IT         | Nashik     |
+|  403 | Mechanical | Nashik     |
++------+------------+------------+
+8 rows in set (0.00 sec)
+
+mysql> select * from Department where D_name='Computer' or D_name='IT';
++------+----------+------------+
+| D_id | D_name   | D_location |
++------+----------+------------+
+|  101 | Computer | Mumbai     |
+|  102 | IT       | Mumbai     |
+|  202 | Computer | Pune       |
+|  203 | IT       | Pune       |
+|  401 | Computer | Nashik     |
+|  402 | IT       | Nashik     |
++------+----------+------------+
+6 rows in set (0.00 sec)
+
+1. Display all Employee details with Department ‘Computer’ and ‘IT’ and Employeefirst name starting with  'p' or 'h'.
+
+mysql> select * from Employee,Department where (Employee.D_id=Department.D_id) and (E_Fname like 'P%' or E_fname like 'H%') and (D_name='Comput
+er' or D_name='IT');
++------+------+---------+---------+-------------+--------+-----------+------+----------+------------+
+| E_id | D_id | E_Fname | E_Lname | Designation | Salary | Join_date | D_id | D_name   | D_location |
++------+------+---------+---------+-------------+--------+-----------+------+----------+------------+
+| 1011 |  101 | Piya    | Raut    | Employee    |  75000 |      2015 |  101 | Computer | Bombay     |
++------+------+---------+---------+-------------+--------+-----------+------+----------+------------+
+1 row in set (0.00 sec)
+
+2. Lists the number of different Employee Positions.
+
+mysql> select distinct Designation from Employee;
++----------------+
+| Designation    |
++----------------+
+| Tech Manager   |
+| Team Leader    |
+| Oper Manager   |
+| HR Manager     |
+| Legal Manager  |
+| Region Manager |
++----------------+
+6 rows in set (0.00 sec)
+
+3. Give 10% increase in Salary of the Employee whose joindate  before 2015.
+
+mysql> UPDATE Employee  SET Salary = Salary + (Salary * 10/100) where Join_date<2015;
+Query OK, 4 rows affected (0.03 sec)
+Rows matched: 4  Changed: 4  Warnings: 0
+
+mysql> select * from Employee;
++------+------+---------+----------+----------------+--------+-----------+
+| E_id | D_id | E_Fname | E_Lname  | Designation    | Salary | Join_date |
++------+------+---------+----------+----------------+--------+-----------+
+| 1011 |  101 | Piya    | Ansari   | Tech Manager   |  74800 |      2015 |
+| 1012 |  101 | Bhavesh | Makh     | Team Leader    |  66000 |      2019 |
+| 1021 |  102 | Karan   | Wagh     | Tech Manager   |  84095 |      2013 |
+| 2021 |  202 | Avnish  | Kumar    | Oper Manager   |  71500 |      2017 |
+| 2022 |  202 | Rajat   | Kakade   | HR Manager     |  73150 |      2017 |
+| 2031 |  203 | Aisha   | Khurana  | Legal Manager  |  79860 |      2014 |
+| 2041 |  204 | Rashi   | Gupta    | Region Manager |  74800 |      2018 |
+| 4011 |  401 | Naira   | Bhatia   | HR Manager     |  75020 |      2014 |
+| 4012 |  401 | Naksh   | Sinha    | Tech Manager   |  75350 |      2016 |
+| 4021 |  402 | Nikhil  | Yadav    | Region Manager |  82280 |      2012 |
+| 4031 |  403 | Nikita  | Kulkarni | Oper Manager   |  76450 |      2016 |
++------+------+---------+----------+----------------+--------+-----------+
+11 rows in set (0.01 sec)
+
+4. Delete all the department details having location as ‘mumbai’.  
+
+mysql> delete from Department where D_location='Mumbai';
+Query OK, 2 rows affected (0.01 sec)
+
+mysql> select * from Department;
++------+------------+------------+
+| D_id | D_name     | D_location |
++------+------------+------------+
+|  202 | Computer   | Pune       |
+|  203 | IT         | Pune       |
+|  204 | ENTC       | Pune       |
+|  401 | Computer   | Nashik     |
+|  402 | IT         | Nashik     |
+|  403 | Mechanical | Nashik     |
++------+------------+------------+
+6 rows in set (0.00 sec)
+
+mysql> select * from Employee;
++------+------+---------+----------+----------------+--------+-----------+
+| E_id | D_id | E_Fname | E_Lname  | Designation    | Salary | Join_date |
++------+------+---------+----------+----------------+--------+-----------+
+| 2021 |  202 | Avnish  | Kumar    | Oper Manager   |  71500 |      2017 |
+| 2022 |  202 | Rajat   | Kakade   | HR Manager     |  73150 |      2017 |
+| 2031 |  203 | Aisha   | Khurana  | Legal Manager  |  79860 |      2014 |
+| 2041 |  204 | Rashi   | Gupta    | Region Manager |  74800 |      2018 |
+| 4011 |  401 | Naira   | Bhatia   | HR Manager     |  75020 |      2014 |
+| 4012 |  401 | Naksh   | Sinha    | Tech Manager   |  75350 |      2016 |
+| 4021 |  402 | Nikhil  | Yadav    | Region Manager |  82280 |      2012 |
+| 4031 |  403 | Nikita  | Kulkarni | Oper Manager   |  76450 |      2016 |
++------+------+---------+----------+----------------+--------+-----------+
+8 rows in set (0.00 sec)
+
+mysql> select * from Project;
++------+------+-----------------+------------+--------+--------+
+| P_id | D_id | P_name          | P_location | P_cost | P_year |
++------+------+-----------------+------------+--------+--------+
+|  210 |  203 | Recognition Sys | Pune       | 350000 |   2019 |
+|  215 |  202 | E_Evaluation    | Pune       | 320000 |   2004 |
+|  418 |  401 | Face Detection  | Nashik     | 450000 |   2015 |
+|  421 |  403 | Sensor Manage   | Nashik     | 620000 |   2007 |
++------+------+-----------------+------------+--------+--------+
+4 rows in set (0.00 sec)
+
+5. Find the names of Projects with location ‘Pune’.
+
+mysql> select P_name from Project where P_location='Pune';
++-----------------+
+| P_name          |
++-----------------+
+| Recognition Sys |
+| E_Evaluation    |
++-----------------+
+2 rows in set (0.00 sec)
+
+6. Find the project having cost in between 100000 to 500000.
+
+mysql> select * from Project where P_cost between 100000 and 500000;
++------+------+-----------------+------------+--------+--------+
+| P_id | D_id | P_name          | P_location | P_cost | P_year |
++------+------+-----------------+------------+--------+--------+
+|  210 |  203 | Recognition Sys | Pune       | 350000 |   2019 |
+|  215 |  202 | E_Evaluation    | Pune       | 320000 |   2004 |
+|  418 |  401 | Face Detection  | Nashik     | 450000 |   2015 |
++------+------+-----------------+------------+--------+--------+
+3 rows in set (0.00 sec)
+
+7. Find the project having maximum price and find average Project cost.
+
+mysql> select max(P_cost), avg(P_cost) as avg_cost from Project;
++-------------+-------------+
+| max(P_cost) | avg_cost    |
++-------------+-------------+
+|      620000 | 435000.0000 |
++-------------+-------------+
+1 row in set (0.00 sec)
+
+9. Display all employees with Emp _id  and Emp name in descending  order.
+
+mysql> select E_id, E_Fname, E_Lname from Employee order by E_fname desc;
++------+---------+----------+
+| E_id | E_Fname | E_Lname  |
++------+---------+----------+
+| 2041 | Rashi   | Gupta    |
+| 2022 | Rajat   | Kakade   |
+| 4031 | Nikita  | Kulkarni |
+| 4021 | Nikhil  | Yadav    |
+| 4012 | Naksh   | Sinha    |
+| 4011 | Naira   | Bhatia   |
+| 2021 | Avnish  | Kumar    |
+| 2031 | Aisha   | Khurana  |
++------+---------+----------+
+8 rows in set (0.00 sec)
+
+10. Display Proj_name,Plocation ,Pcost of all project started in 2004,2005,2007
+
+mysql> select P_name,P_location,P_cost from Project where P_year =2004 or P_year=2005 or P_year=2007;
++---------------+------------+--------+
+| P_name        | P_location | P_cost |
++---------------+------------+--------+
+| E_Evaluation  | Pune       | 320000 |
+| Sensor Manage | Nashik     | 620000 |
++---------------+------------+--------+
+2 rows in set (0.00 sec)
