@@ -1,0 +1,7 @@
+START 100
+SR 2,2
+L 1,D1
++SR 3,3
++A 1,AREA
++AR 2,2
+STOP
