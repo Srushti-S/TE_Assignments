@@ -1,0 +1,173 @@
+Consider Tables:
+1. Borrower(Roll_no, Name, DateofIssue, NameofBook, Status)
+2. Fine(Roll_no,Date,Amt)
+ $ Accept Roll_no and NameofBook from user.
+ $ Check the number of days (from date of issue).
+ $ If days are between 15 to 30 then fine amount will be Rs 5per day.
+ $ If no. of days>30, per day fine will be Rs 50 per day and for days less than 30, Rs. 5 per
+day.
+ $ After submitting the book, status will change from I to R.
+ $ If condition of fine is true, then details will be stored into fine table.
+ $ Also handles the exception by named exception handler or user define exception handler
+
+mysql> create table Borrower(Roll_no int,Name varchar(20),Date_of_Issue date, Name_of_Book varchar(25),Status varchar(20));
+    -> --
+Query OK, 0 rows affected (14.45 sec)
+
+
+mysql> alter table Borrower add constraint primary key(Roll_no)--
+Query OK, 0 rows affected (0.07 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> desc Borrower--
++---------------+-------------+------+-----+---------+-------+
+| Field         | Type        | Null | Key | Default | Extra |
++---------------+-------------+------+-----+---------+-------+
+| Roll_no       | int(11)     | NO   | PRI | 0       |       |
+| Name          | varchar(20) | YES  |     | NULL    |       |
+| Date_of_Issue | date        | YES  |     | NULL    |       |
+| Name_of_Book  | varchar(25) | YES  |     | NULL    |       |
+| Status        | varchar(20) | YES  |     | NULL    |       |
++---------------+-------------+------+-----+---------+-------+
+5 rows in set (0.00 sec)
+
+mysql> create table Fine(Roll_no int primary key, Date date, Amt int, foreign key(Roll_no) references Borrower(Roll_no))--
+Query OK, 0 rows affected (0.07 sec)
+
+mysql> desc Fine--
++---------+---------+------+-----+---------+-------+
+| Field   | Type    | Null | Key | Default | Extra |
++---------+---------+------+-----+---------+-------+
+| Roll_no | int(11) | NO   | PRI | NULL    |       |
+| Date    | date    | YES  |     | NULL    |       |
+| Amt     | int(11) | YES  |     | NULL    |       |
++---------+---------+------+-----+---------+-------+
+3 rows in set (0.00 sec)
+
+mysql> create procedure insert_val(in Rno int, Nm varchar(20), DateI date, NmB varchar(25),St varchar(20))
+    -> begin
+    -> insert into Borrower values(Rno,Nm,DateI,NmB,St);
+    -> select * from Borrower;
+    -> end --
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> call insert_val(401,'Aksh','2022-07-15','DBMS','I')--
++---------+------+---------------+--------------+--------+
+| Roll_no | Name | Date_of_Issue | Name_of_Book | Status |
++---------+------+---------------+--------------+--------+
+|     401 | Aksh | 2022-07-15    | DBMS         | I      |
++---------+------+---------------+--------------+--------+
+1 row in set (0.01 sec)
+
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> call insert_val(425,'Diya','2022-07-15','TOC','I')--
++---------+------+---------------+--------------+--------+
+| Roll_no | Name | Date_of_Issue | Name_of_Book | Status |
++---------+------+---------------+--------------+--------+
+|     401 | Aksh | 2022-07-15    | DBMS         | I      |
+|     425 | Diya | 2022-07-15    | TOC          | I      |
++---------+------+---------------+--------------+--------+
+2 rows in set (0.01 sec)
+
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> call insert_val(468,'Sakhi','2022-07-31','CNS','I')--
++---------+-------+---------------+--------------+--------+
+| Roll_no | Name  | Date_of_Issue | Name_of_Book | Status |
++---------+-------+---------------+--------------+--------+
+|     401 | Aksh  | 2022-07-15    | DBMS         | I      |
+|     425 | Diya  | 2022-07-15    | TOC          | I      |
+|     468 | Sakhi | 2022-07-31    | CNS          | I      |
++---------+-------+---------------+--------------+--------+
+3 rows in set (0.01 sec)
+
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> call insert_val(459,'Nil','2022-08-08','SPOS','I')--
++---------+-------+---------------+--------------+--------+
+| Roll_no | Name  | Date_of_Issue | Name_of_Book | Status |
++---------+-------+---------------+--------------+--------+
+|     401 | Aksh  | 2022-07-15    | DBMS         | I      |
+|     425 | Diya  | 2022-07-15    | TOC          | I      |
+|     459 | Nil   | 2022-08-08    | SPOS         | I      |
+|     468 | Sakhi | 2022-07-31    | CNS          | I      |
++---------+-------+---------------+--------------+--------+
+4 rows in set (0.03 sec)
+
+Query OK, 0 rows affected (0.03 sec)
+mysql> create procedure fine_chk7(in Rno int)
+    -> begin
+    -> declare A int;
+    -> declare idate date;
+    -> declare day int;
+    -> declare exit handler for SQLEXCEPTION select 'create table definition';
+    -> select Date_of_Issue into idate from Borrower where Roll_no=Rno;
+    -> select datediff(curdate(),idate) into day;
+    -> if day>14 and day<31 then
+    -> set A=(day-15)*5;
+    -> elseif day>30 then
+    -> set A=((day-30)*50);
+    -> end if;
+    -> insert into Fine values(Rno,curdate(),A);
+    -> update Borrower set Status='R' where Roll_no=Rno;
+    -> end --
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> call fine_chk7(401)--
+Query OK, 1 row affected (0.02 sec)
+
+mysql> call fine_chk7(425)--
+Query OK, 1 row affected (0.13 sec)
+
+syntax to use near 'selct * from Fine' at line 1
+mysql> select * from Fine--
++---------+------------+------+
+| Roll_no | Date       | Amt  |
++---------+------------+------+
+|     401 | 2022-08-23 |  450 |
+|     425 | 2022-08-23 |  450 |
++---------+------------+------+
+2 rows in set (0.00 sec)
+ 
+ 
+ OR
+
+
+Write a PL/SQL code block to calculate the area of a circle for a value of radius varying from 5
+to 9. Store the radius and the corresponding values of calculated area in an empty table named
+areas, consisting of two columns, radius and area.
+Note: Instructor will frame the problem statement for writing PL/SQL block in line with above
+statement.
+ 
+ mysql> create procedure cal_area ()
+    -> begin
+    -> declare r int;
+    -> declare area float;
+    -> declare pi float;
+    -> set r=5;
+    -> set pi=3.14;
+    -> label:
+    -> while r <= 9 DO
+    -> set area = r*r*pi;
+    -> insert into circle_ar values(r,area);
+    -> set r= r+1;
+    ->   end 
+    ->   while label;
+    -> select * from circle_ar;
+    -> end --
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> call cal_area--
++------+--------+
+| rad  | area   |
++------+--------+
+|    5 |   78.5 |
+|    6 | 113.04 |
+|    7 | 153.86 |
+|    8 | 200.96 |
+|    9 | 254.34 |
++------+--------+
+5 rows in set (0.04 sec)
+
+Query OK, 0 rows affected (0.04 sec)
