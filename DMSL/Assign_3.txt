@@ -1,0 +1,294 @@
+Assignment -3- JoinsSchema and problem statements
+
+
+mysql> select * from Employee;
++------+------+---------+----------+----------------+--------+-----------+
+| E_id | D_id | E_Fname | E_Lname  | Designation    | Salary | Join_date |
++------+------+---------+----------+----------------+--------+-----------+
+| 1011 |  101 | Piya    | Raut     | Employee       |  75000 |      2015 |
+| 2021 |  202 | Avnish  | Kumar    | Oper Manager   |  71500 |      2017 |
+| 2022 |  202 | Rajat   | Kakade   | HR Manager     |  73150 |      2017 |
+| 2031 |  203 | Aisha   | Khurana  | Legal Manager  |  79860 |      2014 |
+| 2041 |  204 | Rashi   | Gupta    | Region Manager |  74800 |      2018 |
+| 4011 |  401 | Naira   | Bhatia   | HR Manager     |  75020 |      2014 |
+| 4012 |  401 | Naksh   | Sinha    | Tech Manager   |  75350 |      2016 |
+| 4021 |  402 | Nikhil  | Yadav    | Region Manager |  82280 |      2012 |
+| 4031 |  403 | Nikita  | Kulkarni | Oper Manager   |  76450 |      2016 |
+| 4041 |  404 | Jay     | Katkar   | Tech Manager   |  78000 |      2008 |
++------+------+---------+----------+----------------+--------+-----------+
+9 rows in set (0.00 sec)
+
+mysql> select * from Department;
++------+------------+------------+
+| D_id | D_name     | D_location |
++------+------------+------------+
+|  101 | Computer   | Bombay     |
+|  202 | Computer   | Pune       |
+|  203 | IT         | Pune       |
+|  204 | ENTC       | Pune       |
+|  401 | Computer   | Nashik     |
+|  402 | IT         | Nashik     |
+|  403 | Mechanical | Nashik     |
++------+------------+------------+
+7 rows in set (0.00 sec)
+
+mysql> select * from Project;
++------+------+-----------------+------------+--------+--------+
+| P_id | D_id | P_name          | P_location | P_cost | P_year |
++------+------+-----------------+------------+--------+--------+
+|  210 |  203 | Recognition Sys | Pune       | 350000 |   2019 |
+|  215 |  202 | E_Evaluation    | Pune       | 320000 |   2004 |
+|  418 |  401 | Face Detection  | Nashik     | 450000 |   2015 |
+|  421 |  403 | Sensor Manage   | Nashik     | 620000 |   2007 |
++------+------+-----------------+------------+--------+--------+
+4 rows in set (0.00 sec)
+
+mysql> insert into Department values(301, 'Computer', 'Nagpur');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into Project values(324, 301, 'Data Analytics','Hydrabad',758600, 2020);
+Query OK, 1 row affected (0.02 sec)
+
+mysql> insert into Employee values(2032, 203, 'Ishika','Ray','Team Leader',78600, 2009);
+Query OK, 1 row affected (0.02 sec)
+
+
+1. Find Employee details and Department details using NATURAL JOIN.
+
+mysql> select * from Employee natural join Department;
++------+------+---------+----------+----------------+--------+-----------+------------+------------+
+| D_id | E_id | E_Fname | E_Lname  | Designation    | Salary | Join_date | D_name     | D_location |
++------+------+---------+----------+----------------+--------+-----------+------------+------------+
+|  101 | 1011 | Piya    | Raut     | Employee       |  75000 |      2015 | Computer   | Bombay     |
+|  202 | 2021 | Avnish  | Kumar    | Oper Manager   |  71500 |      2017 | Computer   | Pune       |
+|  202 | 2022 | Rajat   | Kakade   | HR Manager     |  73150 |      2017 | Computer   | Pune       |
+|  203 | 2031 | Aisha   | Khurana  | Legal Manager  |  79860 |      2014 | IT         | Pune       |
+|  203 | 2032 | Ishika  | Ray      | Team Leader    |  78600 |      2009 | IT         | Pune       |
+|  204 | 2041 | Rashi   | Gupta    | Region Manager |  74800 |      2018 | ENTC       | Pune       |
+|  401 | 4011 | Naira   | Bhatia   | HR Manager     |  75020 |      2014 | Computer   | Nashik     |
+|  401 | 4012 | Naksh   | Sinha    | Tech Manager   |  75350 |      2016 | Computer   | Nashik     |
+|  402 | 4021 | Nikhil  | Yadav    | Region Manager |  82280 |      2012 | IT         | Nashik     |
+|  403 | 4031 | Nikita  | Kulkarni | Oper Manager   |  76450 |      2016 | Mechanical | Nashik     |
++------+------+---------+----------+----------------+--------+-----------+------------+------------+
+10 rows in set (0.00 sec)
+
+2. Find the fname,designation,dlocation,JoinDate
+
+
+mysql> select E_Fname,Designation,Join_date,D_location from Employee left outer join Department on Employee.D_id=Department.D_id; 
+
++---------+----------------+-----------+------------+
+| E_Fname | Designation    | Join_date | D_location |
++---------+----------------+-----------+------------+
+| Piya    | Employee       | Computer  | Bombay     |
+| Avnish  | Oper Manager   | Computer  | Pune       |
+| Rajat   | HR Manager     | Computer  | Pune       |
+| Aisha   | Legal Manager  | IT        | Pune       |
+| Ishika  | Team Leader    | IT        | Pune       |
+| Rashi   | Region Manager | ENTC      | Pune       |
+| Naira   | HR Manager     | Computer  | Nashik     |
+| Naksh   | Tech Manager   | Computer  | Nashik     |
+| Nikhil  | Region Manager | IT        | Nashik     |
+| Nikita  | Oper Manager   | Mechanical| Nashik     |
++---------+----------------+-----------+------------+
+10 rows in set (0.00 sec)
+
+3. Find the Employee details ,Proj_id,Project cost who does not have Project location as ‘Hyderabad’.
+
+mysql> select E_id,E_Fname,E_Lname,Designation,Salary,Join_date,P_id,P_cost from Employee inner join Project on Employee.D_id=Project.D_id and P_location!='Hydrabad';
++------+---------+----------+---------------+--------+-----------+------+--------+
+| E_id | E_Fname | E_Lname  | Designation   | Salary | Join_date | P_id | P_cost |
++------+---------+----------+---------------+--------+-----------+------+--------+
+| 2021 | Avnish  | Kumar    | Oper Manager  |  71500 |      2017 |  215 | 320000 |
+| 2022 | Rajat   | Kakade   | HR Manager    |  73150 |      2017 |  215 | 320000 |
+| 2031 | Aisha   | Khurana  | Legal Manager |  79860 |      2014 |  210 | 350000 |
+| 2032 | Ishika  | Ray      | Team Leader   |  78600 |      2009 |  210 | 350000 |
+| 4011 | Naira   | Bhatia   | HR Manager    |  75020 |      2014 |  418 | 450000 |
+| 4012 | Naksh   | Sinha    | Tech Manager  |  75350 |      2016 |  418 | 450000 |
+| 4031 | Nikita  | Kulkarni | Oper Manager  |  76450 |      2016 |  421 | 620000 |
++------+---------+----------+---------------+--------+-----------+------+--------+
+7 rows in set (0.00 sec)
+
+4. Find Department Name ,employee name, designation for which project year is 2020
+
+mysql> insert into Employee values(3011,301, 'Tashika','Birla','Oper Manager',78500,2018),(3012,301,'Sonia','Garg','Team Leader',78000,2017);
+Query OK, 2 rows affected (0.01 sec)
+Records: 2  Duplicates: 0  Warnings: 0
+
+mysql> select D_name,E_Fname,E_Lname,Designation from (Employee,Department) inner join Project on Employee.D_id=Project.D_id and Department.D_id=Project.D_id and P_year=2020;
++----------+---------+---------+--------------+
+| D_name   | E_Fname | E_Lname | Designation  |
++----------+---------+---------+--------------+
+| Computer | Tashika | Birla   | Oper Manager |
+| Computer | Sonia   | Garg    | Team Leader  |
++----------+---------+---------+--------------+
+2 rows in set (0.00 sec)
+
+5. Display designation,Dept_name where Project cost is greater than 30000
+
+mysql> select Designation,D_name from Employee,Department inner join Project where Employee.D_id=Project.D_id and Department.D_id=Project.D_id and P_cost>30000;
++---------------+------------+
+| Designation   | D_name     |
++---------------+------------+
+| Oper Manager  | Computer   |
+| HR Manager    | Computer   |
+| Legal Manager | IT         |
+| Team Leader   | IT         |
+| Oper Manager  | Computer   |
+| Team Leader   | Computer   |
+| HR Manager    | Computer   |
+| Tech Manager  | Computer   |
+| Oper Manager  | Mechanical |
++---------------+------------+
+9 rows in set (0.00 sec)
+
+6. Find the names of all the Projects that started in the year 2015.
+
+mysql> select P_name from Project where P_year=2015;
++----------------+
+| P_name         |
++----------------+
+| Face Detection |
++----------------+
+1 row in set (0.00 sec)
+
+7. List the dname having number of employees are 10 
+
+mysql> SELECT D.D_Name FROM Department AS D INNER JOIN Employee AS E ON D.D_id = E.D_id GROUP BY E.D_id HAVING COUNT(E.E_id)=10;
++-----------+
+| Dept_Name |
++-----------+
+| Computer  |
++-----------+
+1 row in set (0.00 sec)
+
+8. Display the total number of employee who have joined  any project before 2009
+
+mysql> SELECT E.E_Fname FROM Employee AS E INNER JOIN Project AS P ON E.D_ID = P.D_ID WHERE P.Project_Year<2009;
++------------+
+| First_Name |
++------------+
+| Jay        |
++------------+
+4 rows in set (0.00 sec)
+
+9. Create a view showing the employee  and Department details. 
+
+mysql> CREATE VIEW Emp_Dept_Details AS SELECT D.D_id, D.D_Name, D.D_Location, E.E_id, E.E_Fname, E.E_Lname, E.Designation, E.Salary, E.Join_date FROM Employee AS E INNER JOIN Department AS D WHERE D.D_id = E.D_id;
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> SELECT * FROM Emp_Dept_Details;
++------+------------+------------+------+---------+----------+----------------+--------+-----------+
+| D_id | D_Name     | D_Location | E_id | E_Fname | E_Lname  | Designation    | Salary | Join_date |
++------+------------+------------+------+---------+----------+----------------+--------+-----------+
+|  101 | Computer   | Bombay     | 1011 | Piya    | Raut     | Employee       |  75000 |      2015 |
+|  202 | Computer   | Pune       | 2021 | Avnish  | Kumar    | Oper Manager   |  71500 |      2017 |
+|  202 | Computer   | Pune       | 2022 | Rajat   | Kakade   | HR Manager     |  73150 |      2017 |
+|  203 | IT         | Pune       | 2031 | Aisha   | Khurana  | Legal Manager  |  79860 |      2014 |
+|  203 | IT         | Pune       | 2032 | Ishika  | Ray      | Team Leader    |  78600 |      2009 |
+|  204 | ENTC       | Pune       | 2041 | Rashi   | Gupta    | Region Manager |  74800 |      2018 |
+|  301 | Computer   | Nagpur     | 3011 | Tashika | Birla    | Oper Manager   |  78500 |      2018 |
+|  301 | Computer   | Nagpur     | 3012 | Sonia   | Garg     | Team Leader    |  78000 |      2017 |
+|  401 | Computer   | Nashik     | 4011 | Naira   | Bhatia   | HR Manager     |  75020 |      2014 |
+|  401 | Computer   | Nashik     | 4012 | Naksh   | Sinha    | Tech Manager   |  75350 |      2016 |
+|  402 | IT         | Nashik     | 4021 | Nikhil  | Yadav    | Region Manager |  82280 |      2012 |
+|  403 | Mechanical | Nashik     | 4031 | Nikita  | Kulkarni | Oper Manager   |  76450 |      2016 |
++------+------------+------------+------+---------+----------+----------------+--------+-----------+
+12 rows in set (0.00 sec)
+
+10. Perform Manipulation on simple view-Insert, update, delete, drop view. 
+
+Insert :
+mysql> insert into st_data values(9,'Rakesh', 'TE4', 91);
+Query OK, 1 row affected (0.02 sec)
+
+mysql> select * from st_data;
++-----+---------+-------+------------+
+| Rno | Name    | Class | Percentage |
++-----+---------+-------+------------+
+|   0 | Rajat   | TE1   |         95 |
+|   1 | Ajay    | TE1   |         89 |
+|   2 | Dwij    | TE1   |         85 |
+|   3 | Nittya  | TE2   |         92 |
+|   4 | Shreeya | TE2   |         94 |
+|   5 | Rujul   | TE3   |         88 |
+|   6 | Rashi   | TE3   |         91 |
+|   7 | Jay     | TE4   |         90 |
+|   8 | Nakul   | TE4   |         97 |
+|   9 | Rakesh  | TE4   |         91 |
++-----+---------+-------+------------+
+10 rows in set (0.00 sec)
+
+Update:
+mysql> UPDATE st_data SET Name = 'Manisha' WHERE Rno = 0;
+Query OK, 1 row affected (0.02 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> select * from st_data;
++-----+---------+-------+------------+
+| Rno | Name    | Class | Percentage |
++-----+---------+-------+------------+
+|   0 | Manisha | TE1   |         95 |
+|   1 | Ajay    | TE1   |         89 |
+|   2 | Dwij    | TE1   |         85 |
+|   3 | Nittya  | TE2   |         92 |
+|   4 | Shreeya | TE2   |         94 |
+|   5 | Rujul   | TE3   |         88 |
+|   6 | Rashi   | TE3   |         91 |
+|   7 | Jay     | TE4   |         90 |
+|   8 | Nakul   | TE4   |         97 |
+|   9 | Rakesh  | TE4   |         91 |
++-----+---------+-------+------------+
+10 rows in set (0.00 sec)
+
+Delete :
+mysql> DELETE FROM st_data WHERE Rno = 0;
+Query OK, 1 row affected (0.02 sec)
+
+mysql> select * from st_data;
++-----+---------+-------+------------+
+| Rno | Name    | Class | Percentage |
++-----+---------+-------+------------+
+|   1 | Ajay    | TE1   |         89 |
+|   2 | Dwij    | TE1   |         85 |
+|   3 | Nittya  | TE2   |         92 |
+|   4 | Shreeya | TE2   |         94 |
+|   5 | Rujul   | TE3   |         88 |
+|   6 | Rashi   | TE3   |         91 |
+|   7 | Jay     | TE4   |         90 |
+|   8 | Nakul   | TE4   |         97 |
+|   9 | Rakesh  | TE4   |         91 |
++-----+---------+-------+------------+
+9 rows in set (0.00 sec)
+
+Drop View :
+
+mysql> DROP VIEW st_data
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> show tables;
++--------------------+
+| Tables_in_t31468db |
++--------------------+
+| Borrower           |
+| Department         |
+| Emp_Dept_Details   |
+| Employee           |
+| Fine               |
+| Library            |
+| Library_Audit      |
+| N_EmpId            |
+| N_roll             |
+| O_EmpId            |
+| O_roll             |
+| Project            |
+| Result             |
+| Stud_Marks         |
+| Stud_data          |
+| circle_ar          |
+| data               |
+| st_seq             |
+| topper             |
++--------------------+
+20 rows in set (0.00 sec)
+
