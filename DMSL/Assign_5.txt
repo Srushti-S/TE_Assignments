@@ -1,0 +1,153 @@
+mysql> create table Stud_Marks(Roll_no int primary key,Name varchar(20), Total_Marks int);
+Query OK, 0 rows affected (0.04 sec)
+
+mysql> create table Result(Roll_no int primary key,Name varchar(20), Class varchar(25));
+Query OK, 0 rows affected (0.06 sec)
+
+mysql> alter table Result add constraint foreign key(Roll_no) references Stud_Marks(Roll_no);
+Query OK, 0 rows affected (0.07 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> desc Result;
++---------+-------------+------+-----+---------+-------+
+| Field   | Type        | Null | Key | Default | Extra |
++---------+-------------+------+-----+---------+-------+
+| Roll_no | int(11)     | NO   | PRI | NULL    |       |
+| Name    | varchar(20) | YES  |     | NULL    |       |
+| Class   | varchar(25) | YES  |     | NULL    |       |
++---------+-------------+------+-----+---------+-------+
+3 rows in set (0.00 sec)
+
+mysql> desc Stud_Marks;
++-------------+-------------+------+-----+---------+-------+
+| Field       | Type        | Null | Key | Default | Extra |
++-------------+-------------+------+-----+---------+-------+
+| Roll_no     | int(11)     | NO   | PRI | NULL    |       |
+| Name        | varchar(20) | YES  |     | NULL    |       |
+| Total_Marks | int(11)     | YES  |     | NULL    |       |
++-------------+-------------+------+-----+---------+-------+
+3 rows in set (0.00 sec)
+
+mysql> insert into Stud_Marks values(71,'Raj',981),(76,'Naina',1450),(75,'Kiara',864);
+Query OK, 3 rows affected (14.05 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+mysql> select * from Stud_Marks;
++---------+-------+-------------+
+| Roll_no | Name  | Total_Marks |
++---------+-------+-------------+
+|      71 | Raj   |         981 |
+|      75 | Kiara |         864 |
+|      76 | Naina |        1450 |
++---------+-------+-------------+
+3 rows in set (0.00 sec)
+
+mysql> delimiter --
+mysql> create procedure proc_Grade(in Rno int)
+    -> begin 
+    -> declare marks int;
+    -> declare nm varchar(20);
+    -> declare stat varchar(25);
+    -> select Name into nm from Stud_Marks where Roll_no=Rno;
+    -> select Total_Marks into marks from Stud_Marks where Roll_no=Rno;
+    -> if exists (select * from Stud_Marks where Roll_no=Rno) then
+    -> if marks>=990 and marks<=1500 then
+    -> set stat='Distinction';
+    -> elseif marks>=900 and marks<=989 then
+    -> set stat='First Class';
+    -> elseif marks>=825 and marks<=899 then
+    -> set stat='Higher Second Class'; 
+    -> end if;
+    -> insert into Result values(Rno,Nm,stat);
+    -> else 
+    -> SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Roll No is missing';
+    -> end if;
+    -> end --
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> call proc_Grade(71)--
+Query OK, 1 row affected (0.01 sec)
+
+mysql> call proc_Grade(76)--
+Query OK, 1 row affected (0.08 sec)
+
+mysql> select * from Result;
+    -> --
++---------+-------+-------------+
+| Roll_no | Name  | Class       |
++---------+-------+-------------+
+|      71 | Raj   | First Class |
+|      76 | Naina | Distinction |
++---------+-------+-------------+
+2 rows in set (0.00 sec)
+
+mysql> insert into Stud_Marks values(72,'Dinesh',759)--
+Query OK, 1 row affected (0.01 sec)
+
+mysql> call proc_Grade(72)--
+Query OK, 0 row affected (0.01 sec)
+
+mysql> select * from Result--
++---------+--------+-------------+
+| Roll_no | Name   | Class       |
++---------+--------+-------------+
+|      71 | Raj    | First Class |
+|      76 | Naina  | Distinction |
++---------+--------+-------------+
+3 rows in set (0.00 sec)
+
+delimiter &&
+
+
+create procedure insert_data(in r int,n varchar(10), tm int)
+begin
+insert into Stud_Marks values(r,n,tm);
+end &&
+
+
+create procedure proc_grade(in r1 int)
+begin
+declare mr1 int;
+declare nm varchar(10);
+declare cl varchar(30);
+select tmarks into mr1 from Stud_Marks where rno=r1;
+select name into nm from Stud_Marks where rno=r1;
+select cal(mr1) into cl;
+insert into Result values(r1,nm,cl);
+end &&
+
+delimiter ;
+
+
+
+call insert_data(1,'A',1488);
+call insert_data(2,'B',688);
+call insert_data(3,'C',950);
+call insert_data(4,'D',888);
+call insert_data(5,'E',1008);
+
+select * from Stud_Marks;
+
+delimiter ==
+
+create function cal(mr int)
+returns varchar(30) 
+deterministic
+begin
+declare class varchar(30);
+if mr>=990 and mr<=1500 then
+set class='Distinction';
+elseif mr>=900 and mr<990 then
+set class='First Class';
+elseif mr>=825 and mr<=899 then
+set class='Higher Second Class';
+end if;
+return class;
+end ==
+
+delimiter ;
+
+
+call proc_grade(1);
+
+
