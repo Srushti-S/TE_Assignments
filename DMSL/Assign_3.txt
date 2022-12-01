@@ -52,6 +52,9 @@ Query OK, 1 row affected (0.02 sec)
 mysql> insert into Employee values(2032, 203, 'Ishika','Ray','Team Leader',78600, 2009);
 Query OK, 1 row affected (0.02 sec)
 
+mysql> select Emp_id,Employee.Dept_id,fname,lname,designation,salary,JoinDate,Proj_id,Pcost from Employee inner join Project on Employee.Dept_id=Project.Dept_id where Project.Plocation!='Hydrabad';
+-- here we used inner join instead of left outer join coz w may have employees who doesn't have nay assigned project so in that case left outer join prints null for pcost anf ploc whereas inner joins skips such employees
+
 
 1. Find Employee details and Department details using NATURAL JOIN.
 
@@ -95,7 +98,7 @@ mysql> select E_Fname,Designation,Join_date,D_location from Employee left outer 
 
 3. Find the Employee details ,Proj_id,Project cost who does not have Project location as ‘Hyderabad’.
 
-mysql> select E_id,E_Fname,E_Lname,Designation,Salary,Join_date,P_id,P_cost from Employee inner join Project on Employee.D_id=Project.D_id and P_location!='Hydrabad';
+mysql> select E_id,E_Fname,E_Lname,Designation,Salary,Join_date,P_id,P_cost from Employee left outer join Project on Employee.D_id=Project.D_id and P_location!='Hydrabad';
 +------+---------+----------+---------------+--------+-----------+------+--------+
 | E_id | E_Fname | E_Lname  | Designation   | Salary | Join_date | P_id | P_cost |
 +------+---------+----------+---------------+--------+-----------+------+--------+
@@ -144,6 +147,8 @@ mysql> select Designation,D_name from Employee,Department inner join Project whe
 
 6. Find the names of all the Projects that started in the year 2015.
 
+mysql> self join-- select p.Pname from Project as p inner join Project as p2 on p.Proj_id=p2.Proj_id and p.Pyear=2015;
+
 mysql> select P_name from Project where P_year=2015;
 +----------------+
 | P_name         |
@@ -163,6 +168,8 @@ mysql> SELECT D.D_Name FROM Department AS D INNER JOIN Employee AS E ON D.D_id =
 1 row in set (0.00 sec)
 
 8. Display the total number of employee who have joined  any project before 2009
+
+mysql> select count(Employee.Emp_id) as cnt from Employee inner join Project on Employee.Dept_id=Project.Dept_id and Project.Pyear<2009;
 
 mysql> SELECT E.E_Fname FROM Employee AS E INNER JOIN Project AS P ON E.D_ID = P.D_ID WHERE P.Project_Year<2009;
 +------------+
@@ -292,3 +299,11 @@ mysql> show tables;
 +--------------------+
 20 rows in set (0.00 sec)
 
+create view proj as select * from Project;
+
+insert into proj values(1111,101,'Human VS AI','Mumbai',250000,2018);
+
+update proj set pname='YO' where Proj_id=1111;
+
+delete from proj where Proj_id=1111;
+select * from proj;
