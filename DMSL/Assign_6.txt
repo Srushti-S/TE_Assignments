@@ -1,0 +1,89 @@
+mysql> create table O_EmpId (Id int, Name varchar(20));
+Query OK, 0 rows affected (0.30 sec)
+
+mysql> create table N_EmpId (Id int, Name varchar(20));
+Query OK, 0 rows affected (0.04 sec)
+
+mysql> insert into O_EmpId values(101,'Rashi'),(102,'Krisha'),(103,'Bill'),(104,'Satya');
+Query OK, 4 rows affected (0.01 sec)
+Records: 4  Duplicates: 0  Warnings: 0
+
+mysql> insert into N_EmpId values(101,'Rashi'),(102,'Krisha'),(105,'Jay'),(106,'Jaggu');
+Query OK, 4 rows affected (0.02 sec)
+Records: 4  Duplicates: 0  Warnings: 0
+
+mysql> select * from O_EmpId;
++------+--------+
+| Id   | Name   |
++------+--------+
+|  101 | Rashi  |
+|  102 | Krisha |
+|  103 | Bill   |
+|  104 | Satya  |
++------+--------+
+4 rows in set (0.00 sec)
+
+mysql> select * from N_EmpId;
++------+--------+
+| Id   | Name   |
++------+--------+
+|  101 | Rashi  |
+|  102 | Krisha |
+|  105 | Jay    |
+|  106 | Jaggu  |
++------+--------+
+4 rows in set (0.00 sec)
+
+mysql> delimiter --  
+mysql> create procedure cursor1()  
+    -> begin  
+    -> declare Eflag,flag int default 0;  
+    -> declare i1,i2,cnt1,cnt2 int;  
+    -> declare nm1 varchar(20);  
+    -> declare Ncur cursor for select Id from N_EmpId;
+    -> declare Ocur cursor for select * from O_EmpId; 
+    -> declare CONTINUE HANDLER FOR NOT FOUND set Eflag = 1;  
+    -> open Ncur;  
+    -> open Ocur;
+    -> lbl: LOOP  
+    -> if Eflag = 1 THEN LEAVE lbl;  
+    -> end if;  
+    -> fetch Ocur into i1,nm1;  
+    -> fetch Ncur into i2;
+    -> select count(i1) into cnt1 from O_EmpId;
+    -> while cnt1>0 do
+    -> select count(i2) into cnt2 from N_EmpId;
+    -> while cnt2>0 do
+    -> if exists (select * from N_EmpId where Id=i1) then
+    -> set flag=1;
+    -> end if;
+    -> set cnt2=cnt2-1;
+    -> end while;
+    -> if flag=0 then
+    -> insert into N_EmpId values(i1,nm1);
+    -> end if;
+    -> set flag=0;
+    -> set cnt1=cnt1-1;
+    -> end while;
+    -> end LOOP;  
+    -> close Ncur;
+    -> close Ocur;  
+    -> end --
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> call cursor1()--
+Query OK, 1 row affected (0.02 sec)
+
+mysql> select * from N_EmpId--
++------+--------+
+| Id   | Name   |
++------+--------+
+|  101 | Rashi  |
+|  102 | Krisha |
+|  105 | Jay    |
+|  106 | Jaggu  |
+|  103 | Bill   |
+|  104 | Satya  |
++------+--------+
+6 rows in set (0.00 sec)
+
