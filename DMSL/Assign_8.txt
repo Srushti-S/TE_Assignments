@@ -1,0 +1,101 @@
+Assignment 8- Database Connectivity
+
+import java.sql.*;
+import java.util.*;  
+
+public class connectivity {
+public static void main(String arg[])
+{
+       Connection connection = null;
+       try 
+       {      
+           Class.forName("com.mysql.cj.jdbc.Driver");
+           connection = DriverManager.getConnection("jdbc:mysql://10.10.12.108/t31468db","t31468", "t31468");
+           Scanner sc = new Scanner(System.in);
+           Statement statement;
+           statement = connection.createStatement();
+           ResultSet resultSet = null;
+           int choice = 0;
+           while(choice != 5)
+           {
+        	   System.out.println("----------MENU-----------");
+        	   System.out.println("1. Display all entries from Employee table.");
+        	   System.out.println("2. Insert Record into Employee table.");
+        	   System.out.println("3. Update Record from Employee table.");
+        	   System.out.println("4. Delete Record from Employee table.");
+        	   System.out.println("5. Exit.");
+        	   choice = sc.nextInt();
+        	   int eno;
+        	   String enm;
+        	   if(choice == 1)
+        	   {
+        		   System.out.println();
+        		   resultSet = statement.executeQuery("select * from emp");
+        		   System.out.println("Employee Table entries : ");
+        		   while (resultSet.next()) 
+        		   {
+        			   eno = resultSet.getInt("empno");
+        			   enm = resultSet.getString("ename").trim();
+        			   System.out.println("Employee No : " + eno + " Employee Name : " + enm);
+        		   }           
+        		   System.out.println();
+        	   }
+        	   else if(choice == 2)
+        	   {
+        		   System.out.println("Enter Employee Number and Name : ");
+        		   eno = sc.nextInt();
+        		   enm = sc.nextLine();
+        		   String query1 = "INSERT INTO emp " + "VALUES (" + eno + ",'" + enm + "'," + "80000,2,101)";
+        		   try 
+        		   {
+        			   statement.executeUpdate(query1);
+        			   System.out.println("Record is inserted in the table successfully.");
+        		   }
+        		   catch (SQLIntegrityConstraintViolationException e) 
+        		   {
+        			   throw new RuntimeException("Employee Name already exists.");
+        		   }
+        	   }
+        	   else if(choice == 3)
+        	   {
+        		   System.out.println("Enter Employee Number and Name: ");
+        		   eno = sc.nextInt();
+        		   enm = sc.nextLine();
+        		   String query1 = "UPDATE emp SET ename = '" + enm + "' WHERE empno = " + eno;
+        		   try 
+        		   {
+        			   statement.executeUpdate(query1);
+        			   System.out.println("Record is updated in the table successfully.");
+        		   }
+        		   catch (SQLIntegrityConstraintViolationException e) 
+        		   {
+        			   throw new RuntimeException("Employee number does not exist.");
+        		   }
+        	   }
+        	   else if(choice == 4)
+        	   {
+        		   System.out.println("Enter Employee Number: ");
+        		   eno = sc.nextInt();
+        		   String query1 = "DELETE FROM emp WHERE empno = " + eno;
+        		   try 
+        		   {
+        			   statement.executeUpdate(query1);
+        			   System.out.println("Record is deleted from the table successfully.");
+        		   }
+        		   catch (SQLIntegrityConstraintViolationException e) 
+        		   {
+        			   throw new RuntimeException("Employee number does not exist.");
+        		   }
+        	   }
+           }
+           resultSet.close();
+           statement.close();
+           connection.close();
+           sc.close();
+       }
+       catch (Exception exception) 
+       {
+           System.out.println(exception);
+       }
+   }
+}
