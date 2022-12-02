@@ -1,0 +1,91 @@
+Write a database trigger on Library table. the system should keep track of the records that are being updated or deleted. The old values or deleted records should be added in Library_Audit table.
+
+
+create table Library(Id int, Name varchar(20), Books varchar(20), Status varchar(2));
+Query OK, 0 rows affected (0.04 sec)
+
+create table Library_Audit(Id int, Name varchar(20), Books varchar(20), Status varchar(2));
+Query OK, 0 rows affected (0.04 sec)
+
+mysql> insert into Library values(1, 'Riya', 'TOC', 'I'), (2, 'Joy', 'CNS', 'R'),(3, 'Krish', 'IoT', 'I'),(4, 'Viha', 'DBMS', 'R');
+Query OK, 4 rows affected (0.01 sec)
+Records: 4  Duplicates: 0  Warnings: 0
+
+mysql> delimiter --
+mysql> Create Trigger before_insert  
+    -> BEFORE INSERT ON Library FOR EACH ROW  
+    -> BEGIN  
+    -> if NEW.Books = 'toc' THEN SET NEW.Books = 'TOC';  
+    -> elseif NEW.Books = 'cns' THEN SET NEW.Books = 'CNS';  
+    -> elseif NEW.Books = 'iot' THEN SET NEW.Books = 'IoT';
+    -> elseif NEW.Books = 'dbms' THEN SET NEW.Books = 'DBMS';
+    -> END IF;  
+    -> END --
+Query OK, 0 rows affected (0.12 sec)
+mysql> insert into Library values(5,'Vivan','cns','I');
+Query OK, 1 row affected (0.02 sec)
+
+mysql> select * from Library--
++------+-------+-------+--------+
+| Id   | Name  | Books | Status |
++------+-------+-------+--------+
+|    1 | Riya  | TOC   | I      |
+|    2 | Joy   | CNS   | R      |
+|    3 | Krish | IoT   | I      |
+|    4 | Viha  | DBMS  | R      |
+|    5 | Vivan | CNS   | I      |
++------+-------+-------+--------+
+5 rows in set (0.00 sec)
+
+
+mysql> CREATE TRIGGER before_delete  
+    -> BEFORE Delete ON Library FOR EACH ROW  
+    -> BEGIN
+    -> declare N_id int;
+    -> select Id into N_id from Library_Audit where id=old.Id;
+    -> if old.Id=N_id  then
+    -> delete from Library_Audit where Id=old.id;
+    -> insert into Library_Audit values(old.Id, old.Name, old.Books, old.Status);
+    -> else
+    ->     insert into Library_Audit values(old.Id, old.Name, old.Books, old.Status);
+    -> end if;  
+    -> END -- 
+Query OK, 0 rows affected (0.09 sec)
+
+mysql> CREATE TRIGGER before_update  
+    -> BEFORE update ON Library FOR EACH ROW  
+    -> BEGIN  
+    -> declare N_id int;
+    -> select Id into N_id from Library_Audit where id=old.Id;
+    -> if old.Id=N_id  then
+    -> delete from Library_Audit where Id=old.id;
+    ->     insert into Library_Audit values(old.Id, old.Name, old.Books, old.Status);  
+    -> else
+    -> insert into Library_Audit values(old.Id, old.Name, old.Books, old.Status);
+    -> end if;
+    -> END --
+Query OK, 0 rows affected (0.08 sec)
+
+mysql> update Library set Status='R' where Id=5--
+Query OK, 1 row affected (0.02 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> select * from Library_Audit--
++------+-------+-------+--------+
+| Id   | Name  | Books | Status |
++------+-------+-------+--------+
+|    5 | Vivan | CNS   | I      |
++------+-------+-------+--------+
+1 row in set (0.00 sec)
+
+mysql> delete from Library where Id=5--
+Query OK, 1 row affected (0.02 sec)
+
+mysql> select * from Library_Audit--
++------+-------+-------+--------+
+| Id   | Name  | Books | Status |
++------+-------+-------+--------+
+|    5 | Vivan | CNS   | R      |
++------+-------+-------+--------+
+1 row in set (0.00 sec)
+
