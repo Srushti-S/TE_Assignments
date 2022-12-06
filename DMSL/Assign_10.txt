@@ -1,0 +1,328 @@
+Assignment 10- MongoDB Aggregation and Indexing
+
+student@student-OptiPlex-3020:~$ cd mongodb-linux-x86_64-2.6.3/bin
+student@student-OptiPlex-3020:~/mongodb-linux-x86_64-2.6.3/bin$ ./mongo 10.10.12.108/t31468db -u t31468 -p
+MongoDB shell version: 2.6.3
+Enter password: 
+connecting to: 10.10.12.108/t31468db
+
+> use t31468
+switched to db t31468
+
+> show collections
+myData
+stud
+student
+system.indexes
+
+------------AGGREGATION-----------
+> db.website.insert([{'roll':'2','name':'jitesh','amount':2000,'url':'www.yahoo.com'},{'roll':'3','name':'rina','amount':3000,'url':'www.google.com'},{'roll':'4','name':'ash','amount':4000,'url':'www.gmail.com'},{'roll':'5','name':'ash','amount':1000,'url':'www.pvg.com'}]);
+BulkWriteResult({
+	"writeErrors" : [ ],
+	"writeConcernErrors" : [ ],
+	"nInserted" : 4,
+	"nUpserted" : 0,
+	"nMatched" : 0,
+	"nModified" : 0,
+	"nRemoved" : 0,
+	"upserted" : [ ]
+})
+
+> db.website.find().pretty()
+{
+	"_id" : ObjectId("634fbe562420de956ca6b3c5"),
+	"roll" : "1",
+	"name" : "harsh",
+	"amount" : 1000,
+	"url" : "www.yahoo.com"
+}
+{
+	"_id" : ObjectId("634fbee12420de956ca6b3c6"),
+	"roll" : "2",
+	"name" : "jitesh",
+	"amount" : 2000,
+	"url" : "www.yahoo.com"
+}
+{
+	"_id" : ObjectId("634fbee12420de956ca6b3c7"),
+	"roll" : "3",
+	"name" : "rina",
+	"amount" : 3000,
+	"url" : "www.google.com"
+}
+{
+	"_id" : ObjectId("634fbee12420de956ca6b3c8"),
+	"roll" : "4",
+	"name" : "ash",
+	"amount" : 4000,
+	"url" : "www.gmail.com"
+}
+{
+	"_id" : ObjectId("634fbee12420de956ca6b3c9"),
+	"roll" : "5",
+	"name" : "ash",
+	"amount" : 1000,
+	"url" : "www.pvg.com"
+}
+
+> db.website.aggregate({$group:{_id:"$name","total":{$sum:"$amount"}}});
+{ "_id" : "ash", "total" : 5000 }
+{ "_id" : "rina", "total" : 3000 }
+{ "_id" : "jitesh", "total" : 2000 }
+{ "_id" : "harsh", "total" : 1000 }
+
+ db.website.find().pretty()
+{
+	"_id" : ObjectId("634fbe562420de956ca6b3c5"),
+	"roll" : "1",
+	"name" : "harsh",
+	"amount" : 1000,
+	"url" : "www.yahoo.com"
+}
+{
+	"_id" : ObjectId("634fbee12420de956ca6b3c6"),
+	"roll" : "2",
+	"name" : "jitesh",
+	"amount" : 2000,
+	"url" : "www.yahoo.com"
+}
+{
+	"_id" : ObjectId("634fbee12420de956ca6b3c7"),
+	"roll" : "3",
+	"name" : "rina",
+	"amount" : 3000,
+	"url" : "www.google.com"
+}
+{
+	"_id" : ObjectId("634fbee12420de956ca6b3c8"),
+	"roll" : "4",
+	"name" : "ash",
+	"amount" : 4000,
+	"url" : "www.gmail.com"
+}
+{
+	"_id" : ObjectId("634fbee12420de956ca6b3c9"),
+	"roll" : "5",
+	"name" : "ash",
+	"amount" : 1000,
+	"url" : "www.pvg.com"
+}
+
+> db.website.aggregate({$group:{_id:"$name"}});
+{ "_id" : "ash" }
+{ "_id" : "rina" }
+{ "_id" : "jitesh" }
+{ "_id" : "harsh" }
+
+> db.website.aggregate({$group:{_id:"$name","total":{$sum:"$amount"}}});
+{ "_id" : "ash", "total" : 5000 }
+{ "_id" : "rina", "total" : 3000 }
+{ "_id" : "jitesh", "total" : 2000 }
+{ "_id" : "harsh", "total" : 1000 }
+
+> db.website.aggregate({$group:{_id:"$name",total: {$avg:"$amount"}}})
+{ "_id" : "ash", "total" : 2500 }
+{ "_id" : "rina", "total" : 3000 }
+{ "_id" : "jitesh", "total" : 2000 }
+{ "_id" : "harsh", "total" : 1000 }
+
+> db.website.aggregate({$group:{_id:"$name","total":{$min:"$amount"}}});
+{ "_id" : "ash", "total" : 1000 }
+{ "_id" : "rina", "total" : 3000 }
+{ "_id" : "jitesh", "total" : 2000 }
+{ "_id" : "harsh", "total" : 1000 }
+
+> db.website.aggregate({$group:{_id:"$name","total":{$max:"$amount"}}});
+{ "_id" : "ash", "total" : 4000 }
+{ "_id" : "rina", "total" : 3000 }
+{ "_id" : "jitesh", "total" : 2000 }
+{ "_id" : "harsh", "total" : 1000 }
+
+> db.website.aggregate({$group:{_id:"$name",amt:{$first:"$amount"}}});
+{ "_id" : "ash", "amt" : 4000 }
+{ "_id" : "rina", "amt" : 3000 }
+{ "_id" : "jitesh", "amt" : 2000 }
+{ "_id" : "harsh", "amt" : 1000 }
+
+> db.website.insert({'roll':'6','name':'rina','amount':2000,'url':'www.pvgs.com'})
+WriteResult({ "nInserted" : 1 })
+
+> db.website.aggregate({$group:{_id:"$name",amt:{$first:"$amount"}}});
+{ "_id" : "ash", "amt" : 4000 }
+{ "_id" : "rina", "amt" : 3000 }
+{ "_id" : "jitesh", "amt" : 2000 }
+{ "_id" : "harsh", "amt" : 1000 }
+
+> db.website.aggregate({$group:{_id:"$name",amt:{$last:"$amount"}}});
+{ "_id" : "ash", "amt" : 1000 }
+{ "_id" : "rina", "amt" : 2000 }
+{ "_id" : "jitesh", "amt" : 2000 }
+{ "_id" : "harsh", "amt" : 1000 }
+
+> db.website.aggregate({$group:{_id:"$name",amt:{$push:"$amount"}}});
+{ "_id" : "ash", "amt" : [ 4000, 1000 ] }
+{ "_id" : "rina", "amt" : [ 3000, 2000 ] }
+{ "_id" : "jitesh", "amt" : [ 2000 ] }
+{ "_id" : "harsh", "amt" : [ 1000 ] }
+
+> db.website.aggregate({$group:{_id:"$name",amt:{$sum:1}}});
+{ "_id" : "ash", "amt" : 2 }
+{ "_id" : "rina", "amt" : 2 }
+{ "_id" : "jitesh", "amt" : 1 }
+{ "_id" : "harsh", "amt" : 1 }
+
+> db.website.aggregate({$group:{_id:"$name",amt:{$sum:0}}});
+{ "_id" : "ash", "amt" : 0 }
+{ "_id" : "rina", "amt" : 0 }
+{ "_id" : "jitesh", "amt" : 0 }
+{ "_id" : "harsh", "amt" : 0 }
+
+> db.website.aggregate({$group:{_id:"$name",amt:{$sum:2}}});
+{ "_id" : "ash", "amt" : 4 }
+{ "_id" : "rina", "amt" : 4 }
+{ "_id" : "jitesh", "amt" : 2 }
+{ "_id" : "harsh", "amt" : 2 }
+
+> db.website.aggregate({$group:{_id:"$name",amt:{$sum:10}}});
+{ "_id" : "ash", "amt" : 20 }
+{ "_id" : "rina", "amt" : 20 }
+{ "_id" : "jitesh", "amt" : 10 }
+{ "_id" : "harsh", "amt" : 10 }
+
+> db.website.aggregate({$group:{_id:"$name",amt:{$addToSet:"$amount"}}});
+{ "_id" : "ash", "amt" : [ 1000, 4000 ] }
+{ "_id" : "rina", "amt" : [ 2000, 3000 ] }
+{ "_id" : "jitesh", "amt" : [ 2000 ] }
+{ "_id" : "harsh", "amt" : [ 1000 ] }
+
+
+-----------------INDEXING----------------
+
+> db.student.getIndexes()
+[
+	{
+		"v" : 1,
+		"key" : {
+			"_id" : 1
+		},
+		"name" : "_id_",
+		"ns" : "t31468.student"
+	}
+]
+
+> db.student.createIndex( { name: 1 } )
+{
+	"createdCollectionAutomatically" : false,
+	"numIndexesBefore" : 1,
+	"numIndexesAfter" : 2,
+	"ok" : 1
+}
+
+> db.student.getIndexes()
+[
+	{
+		"v" : 1,
+		"key" : {
+			"_id" : 1
+		},
+		"name" : "_id_",
+		"ns" : "t31468.student"
+	},
+	{
+		"v" : 1,
+		"key" : {
+			"name" : 1
+		},
+		"name" : "name_1",
+		"ns" : "t31468.student"
+	}
+]
+
+> db.student.dropIndex({name:1})
+{ "nIndexesWas" : 2, "ok" : 1 }
+
+> db.student.getIndexes()
+[
+	{
+		"v" : 1,
+		"key" : {
+			"_id" : 1
+		},
+		"name" : "_id_",
+		"ns" : "t31468.student"
+	}
+]
+
+> db.student.createIndex(
+...   { item: 1, quantity: -1 } ,
+...   { name: "trying name" }
+... )
+{
+	"createdCollectionAutomatically" : false,
+	"numIndexesBefore" : 1,
+	"numIndexesAfter" : 2,
+	"ok" : 1
+}
+
+> db.student.getIndexes()
+[
+	{
+		"v" : 1,
+		"key" : {
+			"_id" : 1
+		},
+		"name" : "_id_",
+		"ns" : "t31468.student"
+	},
+	{
+		"v" : 1,
+		"key" : {
+			"item" : 1,
+			"quantity" : -1
+		},
+		"name" : "trying name",
+		"ns" : "t31468.student"
+	}
+]
+
+--------------------------------------try2---------------------------------------
+
+db.createCollection("student")
+
+db.student.insertMany([
+  {_id:0,rno:11,name:'a',marks:[45,46,43],dept:'comp'},
+  {_id:1,rno:12,name:'b',marks:[35,26,33],dept:'comp'},
+  {_id:2,rno:13,name:'c',marks:[40,47,48],dept:'comp'},
+  {_id:3,rno:14,name:'d',marks:[50,46,49],dept:'comp'},
+  {_id:4,rno:15,name:'e',marks:[49,42,44],dept:'it'},
+  {_id:5,rno:16,name:'f',marks:[38,36,23],dept:'it'},
+  {_id:6,rno:17,name:'g',marks:[49,36,40],dept:'it'},
+  {_id:7,rno:18,name:'h',marks:[35,26,49],dept:'it'},
+  ]);
+  
+  db.student.find();
+  
+  /*db.student.aggregate([{$unwind:"$marks"},{$group:{_id:"$name","total_marks":{$sum:"$marks"}}}]);*/
+  
+  /*db.student.aggregate([{$unwind:"$marks"},{$group:{_id:"$name","average_marks":{$avg:"$marks"}}}]);*/
+  
+  
+  /*db.student.aggregate([{$unwind:"$marks"},{$group:{_id:"$name","average_marks":{$min:"$marks"}}}]);*/
+  
+  
+  /*db.student.aggregate([{$unwind:"$marks"},{$group:{_id:"$name","average_marks":{$max:"$marks"}}}]);*/
+  
+ 
+  /*db.student.aggregate([{$unwind:"$marks"},{$match:{dept:"comp"}},{$group:{_id:"$name","total_marks":{$max:"$marks"}}},{$sort:{"total_marks":-1}},{$limit:1}]);*/
+  
+  /*db.student.aggregate([{$unwind:"$marks"},{$match:{dept:"comp"}},{$group:{_id:"$name","total_marks":{$max:"$marks"}}},{$sort:{"total_marks":1}}]);*/
+  
+  db.student.createIndex({name:1});
+  db.student.dropIndex({name:1});
+  db.student.getIndexes();
+  db.student.createIndex(
+  {item:1,quantity:-1},
+  {name:"try index"});
+  db.student.getIndexes();
+  
+
