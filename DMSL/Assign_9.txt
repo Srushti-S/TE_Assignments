@@ -1,0 +1,647 @@
+Assignment 9- MongoDB CRUD Operations
+
+student@student-OptiPlex-3020:~$ cd mongodb-linux-x86_64-2.6.3/bin
+student@student-OptiPlex-3020:~/mongodb-linux-x86_64-2.6.3/bin$ ./mongo 10.10.12.108/t31468db -u t31468 -p
+MongoDB shell version: 2.6.3
+Enter password: 
+connecting to: 10.10.12.108/t31468db
+
+> use t31468
+switched to db t31468
+
+> show collections
+
+--------CRUD Operations--------
+
+> > db.createCollection("Student");
+{ "ok" : 1 }
+
+> db.student.insert({rollno:1,name:"ABC",class:"TE4"})
+WriteResult({ "nInserted" : 1 })
+
+> db.student.insert([{rollno:2,name:"LMN",class:"TE4",subj:['TOC','CNS']},{rollno:3,name:"PQR",class:"TE4"}])
+BulkWriteResult({
+	"writeErrors" : [ ],
+	"writeConcernErrors" : [ ],
+	"nInserted" : 2,
+	"nUpserted" : 0,
+	"nMatched" : 0,
+	"nModified" : 0,
+	"nRemoved" : 0,
+	"upserted" : [ ]
+})
+
+> db.student.insert({rollno:4,name:"XYZ",class:"TE4",subj:['CNS','DBMS']})
+WriteResult({ "nInserted" : 1 })
+
+> db.student.find().pretty()
+{
+	"_id" : ObjectId("634fb9422420de956ca6b3c0"),
+	"rollno" : 1,
+	"name" : "ABC",
+	"class" : "TE4"
+}
+{
+	"_id" : ObjectId("634fba8a2420de956ca6b3c1"),
+	"rollno" : 2,
+	"name" : "LMN",
+	"class" : "TE4",
+	"subj" : [
+		"TOC",
+		"CNS"
+	]
+}
+{
+	"_id" : ObjectId("634fba8a2420de956ca6b3c2"),
+	"rollno" : 3,
+	"name" : "PQR",
+	"class" : "TE4"
+}
+{
+	"_id" : ObjectId("634fbab02420de956ca6b3c3"),
+	"rollno" : 4,
+	"name" : "XYZ",
+	"class" : "TE4",
+	"subj" : [
+		"CNS",
+		"DBMS"
+	]
+}
+
+> db.student.find();
+{ "_id" : ObjectId("634fb9422420de956ca6b3c0"), "rollno" : 1, "name" : "ABC", "class" : "TE4" }
+{ "_id" : ObjectId("634fba8a2420de956ca6b3c1"), "rollno" : 2, "name" : "LMN", "class" : "TE4", "subj" : [ "TOC", "CNS" ] }
+{ "_id" : ObjectId("634fba8a2420de956ca6b3c2"), "rollno" : 3, "name" : "PQR", "class" : "TE4" }
+{ "_id" : ObjectId("634fbab02420de956ca6b3c3"), "rollno" : 4, "name" : "XYZ", "class" : "TE4", "subj" : [ "CNS", "DBMS" ] }
+{ "_id" : ObjectId("634fbb702420de956ca6b3c4"), "name" : "ABC", "rollno" : 1, "class" : "TE1" }
+
+> db.student.remove({name:"PQR"})
+WriteResult({ "nRemoved" : 1 })
+
+> db.student.find();
+{ "_id" : ObjectId("634fb9422420de956ca6b3c0"), "rollno" : 1, "name" : "ABC", "class" : "TE4" }
+{ "_id" : ObjectId("634fba8a2420de956ca6b3c1"), "rollno" : 2, "name" : "LMN", "class" : "TE4", "subj" : [ "TOC", "CNS" ] }
+{ "_id" : ObjectId("634fbab02420de956ca6b3c3"), "rollno" : 4, "name" : "XYZ", "class" : "TE4", "subj" : [ "CNS", "DBMS" ] }
+{ "_id" : ObjectId("634fbb702420de956ca6b3c4"), "name" : "ABC", "rollno" : 1, "class" : "TE1" }
+
+> db.student.insert({rollno:5,name:"PQR",class:"TE4"})
+WriteResult({ "nInserted" : 1 })
+
+> db.student.insert({rollno:6,name:"PQR",class:"TE4"})
+WriteResult({ "nInserted" : 1 })
+
+/*db.student.insertMany([{rno:3,name:'A',std:'TE1'},{rno:2,name:'B',std:'TE4',subj:['CNS','DBMS']}]);*/
+/*db.student.insertMany([{rno:4,name:"LMN",class:"TE4",subj:['TOC','CNS']},{rno:5,name:"PQR",class:"TE4"}]);*/
+
+/*db.student.find({},{'rno':1,"subj":1}).pretty();*/
+
+/*db.student.find().skip(2).limit(1).pretty();*/
+/*db.student.remove({class:'TE4'});*/
+
+/*db.student.find({},{'rno':0}).pretty();*/
+
+> db.student.find();
+{ "_id" : ObjectId("634fb9422420de956ca6b3c0"), "rollno" : 1, "name" : "ABC", "class" : "TE4" }
+{ "_id" : ObjectId("634fba8a2420de956ca6b3c1"), "rollno" : 2, "name" : "LMN", "class" : "TE4", "subj" : [ "TOC", "CNS" ] }
+{ "_id" : ObjectId("634fbab02420de956ca6b3c3"), "rollno" : 4, "name" : "XYZ", "class" : "TE4", "subj" : [ "CNS", "DBMS" ] }
+{ "_id" : ObjectId("634fbb702420de956ca6b3c4"), "name" : "ABC", "rollno" : 1, "class" : "TE1" }
+{ "_id" : ObjectId("636096cbaecd57f288a9dd84"), "rollno" : 5, "name" : "PQR", "class" : "TE4" }
+{ "_id" : ObjectId("636096cdaecd57f288a9dd85"), "rollno" : 6, "name" : "PQR", "class" : "TE4" }
+
+> db.student.remove({name:"PQR"})
+WriteResult({ "nRemoved" : 2 })
+
+> db.student.find();
+{ "_id" : ObjectId("634fb9422420de956ca6b3c0"), "rollno" : 1, "name" : "ABC", "class" : "TE4" }
+{ "_id" : ObjectId("634fba8a2420de956ca6b3c1"), "rollno" : 2, "name" : "LMN", "class" : "TE4", "subj" : [ "TOC", "CNS" ] }
+{ "_id" : ObjectId("634fbab02420de956ca6b3c3"), "rollno" : 4, "name" : "XYZ", "class" : "TE4", "subj" : [ "CNS", "DBMS" ] }
+{ "_id" : ObjectId("634fbb702420de956ca6b3c4"), "name" : "ABC", "rollno" : 1, "class" : "TE1" }
+
+> db.student.update({name:"PQR"},{$set:{class:"TE2"}})
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+
+/*db.student.update({rno:3},{$set:{name:'cat',std:'TE4'}},{multi:true});*/
+/*db.student.find().limit(2).pretty();*/
+
+
+> db.student.insert({rollno:5,name:"PQR",class:"TE4"})
+WriteResult({ "nInserted" : 1 })
+
+> db.student.find();
+{ "_id" : ObjectId("634fb9422420de956ca6b3c0"), "rollno" : 1, "name" : "ABC", "class" : "TE4" }
+{ "_id" : ObjectId("634fba8a2420de956ca6b3c1"), "rollno" : 2, "name" : "LMN", "class" : "TE4", "subj" : [ "TOC", "CNS" ] }
+{ "_id" : ObjectId("634fbab02420de956ca6b3c3"), "rollno" : 4, "name" : "XYZ", "class" : "TE4", "subj" : [ "CNS", "DBMS" ] }
+{ "_id" : ObjectId("634fbb702420de956ca6b3c4"), "name" : "ABC", "rollno" : 1, "class" : "TE1" }
+{ "_id" : ObjectId("636096f9aecd57f288a9dd86"), "rollno" : 5, "name" : "PQR", "class" : "TE4" }
+
+> db.student.find();
+{ "_id" : ObjectId("634fb9422420de956ca6b3c0"), "rollno" : 1, "name" : "ABC", "class" : "TE4" }
+{ "_id" : ObjectId("634fba8a2420de956ca6b3c1"), "rollno" : 2, "name" : "LMN", "class" : "TE4", "subj" : [ "TOC", "CNS" ] }
+{ "_id" : ObjectId("634fbab02420de956ca6b3c3"), "rollno" : 4, "name" : "XYZ", "class" : "TE4", "subj" : [ "CNS", "DBMS" ] }
+{ "_id" : ObjectId("634fbb702420de956ca6b3c4"), "name" : "ABC", "rollno" : 1, "class" : "TE1" }
+{ "_id" : ObjectId("636096f9aecd57f288a9dd86"), "rollno" : 5, "name" : "PQR", "class" : "TE2" }
+
+> db.student.update({name:"ABC"},{$set:{class:"TE3"}},{multi:true})
+WriteResult({ "nMatched" : 2, "nUpserted" : 0, "nModified" : 2 })
+
+> db.student.find();
+{ "_id" : ObjectId("634fb9422420de956ca6b3c0"), "rollno" : 1, "name" : "ABC", "class" : "TE3" }
+{ "_id" : ObjectId("634fba8a2420de956ca6b3c1"), "rollno" : 2, "name" : "LMN", "class" : "TE4", "subj" : [ "TOC", "CNS" ] }
+{ "_id" : ObjectId("634fbab02420de956ca6b3c3"), "rollno" : 4, "name" : "XYZ", "class" : "TE4", "subj" : [ "CNS", "DBMS" ] }
+{ "_id" : ObjectId("634fbb702420de956ca6b3c4"), "name" : "ABC", "rollno" : 1, "class" : "TE3" }
+{ "_id" : ObjectId("636096f9aecd57f288a9dd86"), "rollno" : 5, "name" : "PQR", "class" : "TE2" }
+
+--------SAVE Method--------
+
+> db.student.save(
+... ...    {
+... ...       "_id" : ObjectId("634fbb702420de956ca6b3c4"), 
+... ... "title":"ABC",
+... ...       "by":"ABCD"
+... ...    }
+... ... )
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+
+> db.student.find();
+{ "_id" : ObjectId("634fb9422420de956ca6b3c0"), "rollno" : 1, "name" : "ABC", "class" : "TE3" }
+{ "_id" : ObjectId("634fba8a2420de956ca6b3c1"), "rollno" : 2, "name" : "LMN", "class" : "TE4", "subj" : [ "TOC", "CNS" ] }
+{ "_id" : ObjectId("634fbab02420de956ca6b3c3"), "rollno" : 4, "name" : "XYZ", "class" : "TE4", "subj" : [ "CNS", "DBMS" ] }
+{ "_id" : ObjectId("634fbb702420de956ca6b3c4"), "title" : "ABC", "by" : "ABCD" }
+{ "_id" : ObjectId("636096f9aecd57f288a9dd86"), "rollno" : 5, "name" : "PQR", "class" : "TE2" }
+
+> db.student.save(    {       "_id" : ObjectId("636096f9aecd57f288a9dd86"),  "name":"PQR",       "name":"PQRS"    } )
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+
+> db.student.find();
+{ "_id" : ObjectId("634fb9422420de956ca6b3c0"), "rollno" : 1, "name" : "ABC", "class" : "TE3" }
+{ "_id" : ObjectId("634fba8a2420de956ca6b3c1"), "rollno" : 2, "name" : "LMN", "class" : "TE4", "subj" : [ "TOC", "CNS" ] }
+{ "_id" : ObjectId("634fbab02420de956ca6b3c3"), "rollno" : 4, "name" : "XYZ", "class" : "TE4", "subj" : [ "CNS", "DBMS" ] }
+{ "_id" : ObjectId("634fbb702420de956ca6b3c4"), "title" : "ABC", "by" : "ABCD" }
+{ "_id" : ObjectId("636096f9aecd57f288a9dd86"), "name" : "PQRS" }
+
+> db.stud.drop()
+true
+
+> show collections
+myData
+student
+system.indexes
+website
+
+
+----------------------------------------
+
+> db.student.find({},{"name" : 1, "rollno" : 1}).pretty();
+{
+	"_id" : ObjectId("634fb9422420de956ca6b3c0"),
+	"rollno" : 1,
+	"name" : "ABC"
+}
+{
+	"_id" : ObjectId("634fba8a2420de956ca6b3c1"),
+	"rollno" : 2,
+	"name" : "LMN"
+}
+{
+	"_id" : ObjectId("634fbab02420de956ca6b3c3"),
+	"rollno" : 4,
+	"name" : "XYZ"
+}
+{ "_id" : ObjectId("634fbb702420de956ca6b3c4") }
+{ "_id" : ObjectId("636096f9aecd57f288a9dd86"), "name" : "PQRS" }
+
+----------------------------------------EXTRA OPERATIONS----------------------------------------
+
+db.createCollection('Mobiles')
+
+
+db.Mobiles.insert(
+{
+Company: "Samsung",
+Name: "Samsung Galaxy S21 Ultra",
+ProductNo: "M23000",
+Price: 80000,
+Inventory_amount: 200,
+Specifications: {Dispaly_size: 6.8, Display_Resolution: "1440x3088 pixels"}
+})
+db.Mobiles.insert(
+{
+Company: "Google",
+Name: "Google Pixel 6",
+ProductNo: "M23001",
+Price: 60000,
+Inventory_amount: 150,
+Specifications: {Dispaly_size: 6.4, Display_Resolution: "1080x2400 pixels"}
+})
+db.Mobiles.insert(
+{
+Company: "Samsung",
+Name: "Samsung Galaxy M33",
+ProductNo: "M23002",
+Price: 20000,
+Inventory_amount: 100,
+Specifications: {Dispaly_size: 6.6 inches, Display_Resolution: "1080x2408 pixels"}
+})
+db.Mobiles.insert(
+{
+Company: "Apple",
+Name: "Iphone 12",
+ProductNo: "M23003",
+Price: 100000,
+Inventory_amount: 300,
+Specifications: {Dispaly_size: 6.1, Display_Resolution: "1170x2532 pixels"}
+})
+db.Mobiles.insert(
+{
+Company: "Apple",
+Name: "Iphone X",
+ProductNo: "M23004",
+Price: 85000,
+Inventory_amount: 400,
+Specifications: {Dispaly_size: 5.8, Display_Resolution: "1125x2436 pixels"}
+})
+db.Mobiles.insert(
+{
+Company: "Google",
+Name: "Google Pixel 7 pro",
+ProductNo: "M23005",
+Price: 150000,
+Inventory_amount: 300,
+Specifications: {Dispaly_size: 6.7, Display_Resolution: "1440x3120 pixels"}
+})
+db.Mobiles.insert(
+{
+Company: "Google",
+Name: "Google Pixel 7",
+ProductNo: "M23006",
+Price: 100000,
+Inventory_amount: 250,
+Specifications: {Dispaly_size: 6.3, Display_Resolution: "1080x2400 pixels"}
+})
+db.Mobiles.insert(
+{
+Company: "Samsung",
+Name: "Samsung Galaxy A52",
+ProductNo: "M23007",
+Price: 25000,
+Inventory_amount: 110,
+Specifications: {Dispaly_size: 6.5, Display_Resolution: "1080x2400 pixels"}
+})
+db.Mobiles.insert(
+{
+Company: "Google",
+Name: "Google Pixel 6 pro",
+ProductNo: "M23008",
+Price: 80000,
+Inventory_amount: 250,
+Specifications: {Dispaly_size: 6.4, Display_Resolution: "1080x2400 pixels"}
+})
+db.Mobiles.insert(
+{
+Company: "Apple",
+Name: "Iphone 11",
+ProductNo: "M23009",
+Price: 40000,
+Inventory_amount: 500,
+Specifications: {Dispaly_size: 6.1, Display_Resolution: "828x1792 pixels"}
+})
+
+Queries:
+
+1) Write MongoDB query to display all the documents in the collection Mobiles.
+
+> db.Mobiles.find({}).pretty()
+{
+	"_id" : ObjectId("634e51d035f59843761ff5d6"),
+	"Company" : "Samsung",
+	"Name" : "Samsung Galaxy S21 Ultra",
+	"ProductNo" : "M23000",
+	"Price" : 80000,
+	"Inventory_amount" : 200,
+	"Specifications" : {
+		"Dispaly_size" : 6.8,
+		"Display_Resolution" : "1440x3088 pixels"
+	}
+}
+{
+	"_id" : ObjectId("634e51d635f59843761ff5d7"),
+	"Company" : "Google",
+	"Name" : "Google Pixel 6",
+	"ProductNo" : "M23001",
+	"Price" : 60000,
+	"Inventory_amount" : 150,
+	"Specifications" : {
+		"Dispaly_size" : 6.4,
+		"Display_Resolution" : "1080x2400 pixels"
+	}
+}
+{
+	"_id" : ObjectId("634e51e635f59843761ff5d8"),
+	"Company" : "Apple",
+	"Name" : "Iphone 12",
+	"ProductNo" : "M23003",
+	"Price" : 100000,
+	"Inventory_amount" : 300,
+	"Specifications" : {
+		"Dispaly_size" : 6.1,
+		"Display_Resolution" : "1170x2532 pixels"
+	}
+}
+{
+	"_id" : ObjectId("634e51ef35f59843761ff5d9"),
+	"Company" : "Apple",
+	"Name" : "Iphone X",
+	"ProductNo" : "M23004",
+	"Price" : 85000,
+	"Inventory_amount" : 400,
+	"Specifications" : {
+		"Dispaly_size" : 5.8,
+		"Display_Resolution" : "1125x2436 pixels"
+	}
+}
+{
+	"_id" : ObjectId("634e51f635f59843761ff5da"),
+	"Company" : "Google",
+	"Name" : "Google Pixel 7 pro",
+	"ProductNo" : "M23005",
+	"Price" : 150000,
+	"Inventory_amount" : 300,
+	"Specifications" : {
+		"Dispaly_size" : 6.7,
+		"Display_Resolution" : "1440x3120 pixels"
+	}
+}
+{
+	"_id" : ObjectId("634e520035f59843761ff5db"),
+	"Company" : "Google",
+	"Name" : "Google Pixel 7",
+	"ProductNo" : "M23006",
+	"Price" : 100000,
+	"Inventory_amount" : 250,
+	"Specifications" : {
+		"Dispaly_size" : 6.3,
+		"Display_Resolution" : "1080x2400 pixels"
+	}
+}
+{
+	"_id" : ObjectId("634e520835f59843761ff5dc"),
+	"Company" : "Samsung",
+	"Name" : "Samsung Galaxy A52",
+	"ProductNo" : "M23007",
+	"Price" : 25000,
+	"Inventory_amount" : 110,
+	"Specifications" : {
+		"Dispaly_size" : 6.5,
+		"Display_Resolution" : "1080x2400 pixels"
+	}
+}
+{
+	"_id" : ObjectId("634e523235f59843761ff5dd"),
+	"Company" : "Google",
+	"Name" : "Google Pixel 6 pro",
+	"ProductNo" : "M23008",
+	"Price" : 80000,
+	"Inventory_amount" : 250,
+	"Specifications" : {
+		"Dispaly_size" : 6.4,
+		"Display_Resolution" : "1080x2400 pixels"
+	}
+}
+{
+	"_id" : ObjectId("634e523835f59843761ff5de"),
+	"Company" : "Apple",
+	"Name" : "Iphone 11",
+	"ProductNo" : "M23009",
+	"Price" : 40000,
+	"Inventory_amount" : 500,
+	"Specifications" : {
+		"Dispaly_size" : 6.1,
+		"Display_Resolution" : "828x1792 pixels"
+	}
+}
+
+
+
+2) Write MongoDB query to display the fields Company, Name, Price
+
+> db.Mobiles.find({},{"Company" : 1, "Name" : 1, "Price" : 1}).pretty();
+{
+	"_id" : ObjectId("634e51d035f59843761ff5d6"),
+	"Company" : "Samsung",
+	"Name" : "Samsung Galaxy S21 Ultra",
+	"Price" : 80000
+}
+{
+	"_id" : ObjectId("634e51d635f59843761ff5d7"),
+	"Company" : "Google",
+	"Name" : "Google Pixel 6",
+	"Price" : 60000
+}
+{
+	"_id" : ObjectId("634e51e635f59843761ff5d8"),
+	"Company" : "Apple",
+	"Name" : "Iphone 12",
+	"Price" : 100000
+}
+{
+	"_id" : ObjectId("634e51ef35f59843761ff5d9"),
+	"Company" : "Apple",
+	"Name" : "Iphone X",
+	"Price" : 85000
+}
+{
+	"_id" : ObjectId("634e51f635f59843761ff5da"),
+	"Company" : "Google",
+	"Name" : "Google Pixel 7 pro",
+	"Price" : 150000
+}
+{
+	"_id" : ObjectId("634e520035f59843761ff5db"),
+	"Company" : "Google",
+	"Name" : "Google Pixel 7",
+	"Price" : 100000
+}
+{
+	"_id" : ObjectId("634e520835f59843761ff5dc"),
+	"Company" : "Samsung",
+	"Name" : "Samsung Galaxy A52",
+	"Price" : 25000
+}
+{
+	"_id" : ObjectId("634e523235f59843761ff5dd"),
+	"Company" : "Google",
+	"Name" : "Google Pixel 6 pro",
+	"Price" : 80000
+}
+{
+	"_id" : ObjectId("634e523835f59843761ff5de"),
+	"Company" : "Apple",
+	"Name" : "Iphone 11",
+	"Price" : 40000
+}
+
+
+3) Write a MongoDB query to display the fields restaurant_id, name, borough and cuisine, but exclude the field _id for all the documents in the collection restaurant.
+
+> db.Mobiles.find({},{"_id" : 0, "Company" : 1, "Name" : 1, "Price" : 1});
+{ "Company" : "Samsung", "Name" : "Samsung Galaxy S21 Ultra", "Price" : 80000 }
+{ "Company" : "Google", "Name" : "Google Pixel 6", "Price" : 60000 }
+{ "Company" : "Apple", "Name" : "Iphone 12", "Price" : 100000 }
+{ "Company" : "Apple", "Name" : "Iphone X", "Price" : 85000 }
+{ "Company" : "Google", "Name" : "Google Pixel 7 pro", "Price" : 150000 }
+{ "Company" : "Google", "Name" : "Google Pixel 7", "Price" : 100000 }
+{ "Company" : "Samsung", "Name" : "Samsung Galaxy A52", "Price" : 25000 }
+{ "Company" : "Google", "Name" : "Google Pixel 6 pro", "Price" : 80000 }
+{ "Company" : "Apple", "Name" : "Iphone 11", "Price" : 40000 }
+
+
+
+4) Write a MongoDB query to display the first 5 restaurant which is in the borough Bronx.
+
+> db.Mobiles.find({"Company" : "Samsung"},{"_id" : 0}).limit(3).pretty();
+{
+	"Company" : "Samsung",
+	"Name" : "Samsung Galaxy S21 Ultra",
+	"ProductNo" : "M23000",
+	"Price" : 80000,
+	"Inventory_amount" : 200,
+	"Specifications" : {
+		"Dispaly_size" : 6.8,
+		"Display_Resolution" : "1440x3088 pixels"
+	}
+}
+{
+	"Company" : "Samsung",
+	"Name" : "Samsung Galaxy A52",
+	"ProductNo" : "M23007",
+	"Price" : 25000,
+	"Inventory_amount" : 110,
+	"Specifications" : {
+		"Dispaly_size" : 6.5,
+		"Display_Resolution" : "1080x2400 pixels"
+	}
+}
+
+
+
+5) Write a MongoDB query to display the next 5 restaurants after skipping first 5 which are in the borough Bronx. 
+
+db.Mobiles.find({"Company" : "Samsung"},{"_id" : 0}).skip(1).limit(3).pretty();
+{
+	"Company" : "Samsung",
+	"Name" : "Samsung Galaxy A52",
+	"ProductNo" : "M23007",
+	"Price" : 25000,
+	"Inventory_amount" : 110,
+	"Specifications" : {
+		"Dispaly_size" : 6.5,
+		"Display_Resolution" : "1080x2400 pixels"
+	}
+}
+
+
+6) Write a MongoDB query to find mobiles names with price greater that 70000.
+
+
+--------------------------------------------------------------------------------
+.
+.
+.
+.
+.
+.
+.
+--------Logical Operations--------
+
+> db.student.find({rollno: {$not: {$eq: 4 }}}).pretty()
+{
+	"_id" : ObjectId("634fb9422420de956ca6b3c0"),
+	"rollno" : 1,
+	"name" : "ABC",
+	"class" : "TE4"
+}
+{
+	"_id" : ObjectId("634fba8a2420de956ca6b3c1"),
+	"rollno" : 2,
+	"name" : "LMN",
+	"class" : "TE4",
+	"subj" : [
+		"TOC",
+		"CNS"
+	]
+}
+{
+	"_id" : ObjectId("634fba8a2420de956ca6b3c2"),
+	"rollno" : 3,
+	"name" : "PQR",
+	"class" : "TE4"
+}
+
+> db.student.find({$and:[{name:"ABC"},{class:"TE4"}]})
+{ "_id" : ObjectId("634fb9422420de956ca6b3c0"), "rollno" : 1, "name" : "ABC", "class" : "TE4" }
+
+> db.student.insert({name:"ABC",rollno:1,class:"TE1"})
+WriteResult({ "nInserted" : 1 })
+
+> db.student.find({$and:[{name:"ABC"},{class:"TE4"}]}).pretty()
+{
+	"_id" : ObjectId("634fb9422420de956ca6b3c0"),
+	"rollno" : 1,
+	"name" : "ABC",
+	"class" : "TE4"
+}
+
+> db.student.find({$or:[{name:"ABC"},{class:"TE4"}]}).pretty()
+{
+	"_id" : ObjectId("634fb9422420de956ca6b3c0"),
+	"rollno" : 1,
+	"name" : "ABC",
+	"class" : "TE4"
+}
+{
+	"_id" : ObjectId("634fba8a2420de956ca6b3c1"),
+	"rollno" : 2,
+	"name" : "LMN",
+	"class" : "TE4",
+	"subj" : [
+		"TOC",
+		"CNS"
+	]
+}
+{
+	"_id" : ObjectId("634fba8a2420de956ca6b3c2"),
+	"rollno" : 3,
+	"name" : "PQR",
+	"class" : "TE4"
+}
+{
+	"_id" : ObjectId("634fbab02420de956ca6b3c3"),
+	"rollno" : 4,
+	"name" : "XYZ",
+	"class" : "TE4",
+	"subj" : [
+		"CNS",
+		"DBMS"
+	]
+}
+{
+	"_id" : ObjectId("634fbb702420de956ca6b3c4"),
+	"name" : "ABC",
+	"rollno" : 1,
+	"class" : "TE1"
+}
+
+> db.student.find({$or:[{name:"ABC"},{class:"TE1"}]}).pretty()
+{
+	"_id" : ObjectId("634fb9422420de956ca6b3c0"),
+	"rollno" : 1,
+	"name" : "ABC",
+	"class" : "TE4"
+}
+{
+	"_id" : ObjectId("634fbb702420de956ca6b3c4"),
+	"name" : "ABC",
+	"rollno" : 1,
+	"class" : "TE1"
+}
+
