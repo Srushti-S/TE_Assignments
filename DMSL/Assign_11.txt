@@ -1,0 +1,116 @@
+Assignment 11- MongoDB Map Reduce Operations
+
+student@student-OptiPlex-3020:~$ cd mongodb-linux-x86_64-2.6.3/bin
+student@student-OptiPlex-3020:~/mongodb-linux-x86_64-2.6.3/bin$ ./mongo 10.10.12.108/t31468db -u t31468 -p
+MongoDB shell version: 2.6.3
+Enter password: 
+connecting to: 10.10.12.108/t31468db
+
+> use t31468
+switched to db t31468
+
+> show collections
+myData
+student
+system.indexes
+website
+
+> db.createCollection("Library")
+{ "ok" : 1 }
+
+> show collections
+Library
+myData
+student
+system.indexes
+website
+
+> db.Library.insert({rollno:1,name:"A",Books:["CNS","DBMS"],status:"I"})
+WriteResult({ "nInserted" : 1 })
+
+> db.Library.insert([{rollno:2,name:"B",Books:["TOC","IoT"],status:"I"},{rollno:3,name:"C",Books:"HCI",status:"R"},{rollno:5,name:"D",Books:["TOC","IoT"],status:"I"},{rollno:4,name:"E",Books:["TOC","DS"],status:"I"}])
+BulkWriteResult({
+	"writeErrors" : [ ],
+	"writeConcernErrors" : [ ],
+	"nInserted" : 4,
+	"nUpserted" : 0,
+	"nMatched" : 0,
+	"nModified" : 0,
+	"nRemoved" : 0,
+	"upserted" : [ ]
+})
+
+> db.Library.insert([{rollno:6,name:"G",Books:["DBMS","IoT"],status:"I"},{rollno:7,name:"H",Books:"CNS",status:"R"},{rollno:8,name:"D",Books:["CNS","DS"],status:"R"},{rollno:9,name:"K",Books:["TOC","DS","SPOS"],status:"I"}])
+BulkWriteResult({
+	"writeErrors" : [ ],
+	"writeConcernErrors" : [ ],
+	"nInserted" : 4,
+	"nUpserted" : 0,
+	"nMatched" : 0,
+	"nModified" : 0,
+	"nRemoved" : 0,
+	"upserted" : [ ]
+})
+
+> db.Library.find()
+{ "_id" : ObjectId("6360a1264c8f048a1213cfa5"), "rollno" : 1, "name" : "A", "Books" : [ "CNS", "DBMS" ], "status" : 500 }
+{ "_id" : ObjectId("6360a1b94c8f048a1213cfa6"), "rollno" : 2, "name" : "B", "Books" : [ "TOC", "IoT" ], "status" : 500 }
+{ "_id" : ObjectId("6360a1b94c8f048a1213cfa7"), "rollno" : 3, "name" : "C", "Books" : "HCI", "status" : 250 }
+{ "_id" : ObjectId("6360a1b94c8f048a1213cfa8"), "rollno" : 5, "name" : "D", "Books" : [ "TOC", "IoT" ], "status" : 650 }
+{ "_id" : ObjectId("6360a1b94c8f048a1213cfa9"), "rollno" : 4, "name" : "E", "Books" : [ "TOC", "DS" ], "status" : 550 }
+{ "_id" : ObjectId("6360a2b34c8f048a1213cfaa"), "rollno" : 6, "name" : "G", "Books" : [ "DBMS", "IoT" ], "status" : 400 }
+{ "_id" : ObjectId("6360a2b34c8f048a1213cfab"), "rollno" : 7, "name" : "H", "Books" : "CNS", "status" : 300 }
+{ "_id" : ObjectId("6360a2b34c8f048a1213cfac"), "rollno" : 8, "name" : "D", "Books" : [ "CNS", "DS" ], "status" : 350 }
+{ "_id" : ObjectId("6360a2b34c8f048a1213cfad"), "rollno" : 9, "name" : "K", "Books" : [ "TOC", "DS", "SPOS" ], "status" : 650 }
+
+> db.Library.update({rollno:5},{$set:{rollno:1}})
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+> db.Library.update({rollno:6},{$set:{rollno:2}})
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+> db.Library.update({rollno:7},{$set:{rollno:3}})
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+> db.Library.update({rollno:8},{$set:{rollno:4}})
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+> db.Library.update({rollno:9},{$set:{rollno:5}})
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+
+> db.Library.find()
+{ "_id" : ObjectId("6360a1264c8f048a1213cfa5"), "rollno" : 1, "name" : "A", "Books" : [ "CNS", "DBMS" ], "status" : 500 }
+{ "_id" : ObjectId("6360a1b94c8f048a1213cfa6"), "rollno" : 2, "name" : "B", "Books" : [ "TOC", "IoT" ], "status" : 500 }
+{ "_id" : ObjectId("6360a1b94c8f048a1213cfa7"), "rollno" : 3, "name" : "C", "Books" : "HCI", "status" : 250 }
+{ "_id" : ObjectId("6360a1b94c8f048a1213cfa8"), "rollno" : 1, "name" : "D", "Books" : [ "TOC", "IoT" ], "status" : 650 }
+{ "_id" : ObjectId("6360a1b94c8f048a1213cfa9"), "rollno" : 4, "name" : "E", "Books" : [ "TOC", "DS" ], "status" : 550 }
+{ "_id" : ObjectId("6360a2b34c8f048a1213cfaa"), "rollno" : 2, "name" : "G", "Books" : [ "DBMS", "IoT" ], "status" : 400 }
+{ "_id" : ObjectId("6360a2b34c8f048a1213cfab"), "rollno" : 3, "name" : "H", "Books" : "CNS", "status" : 300 }
+{ "_id" : ObjectId("6360a2b34c8f048a1213cfac"), "rollno" : 4, "name" : "D", "Books" : [ "CNS", "DS" ], "status" : 350 }
+{ "_id" : ObjectId("6360a2b34c8f048a1213cfad"), "rollno" : 5, "name" : "K", "Books" : [ "TOC", "DS", "SPOS" ], "status" : 650 }
+
+> var mapfunction=function(){ emit(this.rollno,this.status)};
+
+> var reducefunction=function(key,value){return Array.sum(value);}
+
+> db.Library.mapReduce(mapfunction,reducefunction,{'out':'new'});
+{
+	"result" : "new",
+	"timeMillis" : 2,
+	"counts" : {
+		"input" : 9,
+		"emit" : 9,
+		"reduce" : 4,
+		"output" : 5
+	},
+	"ok" : 1,
+}
+
+> db.Library.mapReduce(mapfunction,reducefunction,{'out':'new'}).find().pretty();
+{ "_id" : 1, "value" : 1150 }
+{ "_id" : 2, "value" : 900 }
+{ "_id" : 3, "value" : 550 }
+{ "_id" : 4, "value" : 900 }
+{ "_id" : 5, "value" : 650 }
+
+
+
+
+
+
