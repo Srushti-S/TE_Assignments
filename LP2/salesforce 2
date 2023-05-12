@@ -1,0 +1,72 @@
+Visual force 
+
+<apex:page docType="html-5.0" controller="backend">
+    <apex:form >
+        <apex:inputFile value="{!csv}"/>
+        <apex:commandButton value="Import Data" action="{!importData}" />
+        <apex:outputLabel value="{!error}" />
+        <apex:pageBlock >
+            <apex:pageBlockTable value="{!uploadedAccounts}" var="person" rendered="{!NOT(ISNULL(uploadedAccounts))}">
+                <apex:column >
+                  <apex:facet name="header">Name</apex:facet>
+                        {!person.name}
+                  </apex:column>
+                <apex:column >
+                  <apex:facet name="header">Age</apex:facet>
+                        {!person.age}
+                  </apex:column>
+                <apex:column >
+                  <apex:facet name="header">Salary</apex:facet>
+                        {!person.salary}
+                  </apex:column>
+            </apex:pageBlockTable>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>
+
+
+
+
+Apex class
+
+public class backend {
+    public class person {
+        public string name {get; set;}
+        public string age {get; set;}
+        public string salary {get; set;}
+    }
+    public Blob csv {get; set;}
+    public List<person> persons {get;set;}
+    public string error {get; set;}    
+    public void importData() {
+        if (csv == null) {
+            error = 'File empty or not uploaded';
+        } else {
+            string csv_str = csv.toString();
+            String[] csv_lines = csv_str.split('\n');
+            persons = new list<person>();
+            for (Integer i = 1; i < csv_lines.size(); i++) {
+                person p = new person();
+                String[] csv_cols = csv_lines[i].split(',');
+                Date todate = Date.today();
+                Date bd = Date.parse(csv_cols[1]);
+                p.name = csv_cols[0];
+                p.age = String.valueOf(todate.year() - bd.year());
+                p.salary = csv_cols[2];
+                persons.add(p);
+            }
+        }
+       
+    }
+   
+    public List<person> getuploadedAccounts()
+    {
+        if (persons!= NULL)
+            if (persons.size() > 0)
+                return persons;
+            else
+                return null;                    
+        else
+            return null;
+    }  
+}
