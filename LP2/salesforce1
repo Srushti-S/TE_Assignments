@@ -1,0 +1,49 @@
+<apex:page docType="html-5.0" controller="temp">
+    <style>
+        .btn {
+        	width=20px;
+        }
+    </style>
+    <apex:form >
+        <div style="display: flex; justify-content: center; align-items:center; flex-direction:column; padding:20px">
+        <apex:outputLabel >Number1: </apex:outputLabel>
+        <apex:input type="number" value="{!num1}"/>
+        <br/>
+        <br/>
+        <apex:outputLabel >Number2: </apex:outputLabel>
+        <apex:input type="number" value="{!num2}"/>
+        <br/>
+        <br/>
+        <div>
+        <apex:commandButton value="+" action="{!add}" style="width:30px; height: 30px"/>
+        <apex:commandButton value="-" action="{!sub}" style="width:30px; height: 30px"/>
+        <apex:commandButton value="/" action="{!div}" style="width:30px; height: 30px"/>
+        <apex:commandButton value="*" action="{!mul}" style="width:30px; height: 30px"/>        
+        </div>
+        <br/>
+        <br/>
+        <apex:outputLabel >Answer: </apex:outputLabel>
+        <apex:input type="number" value="{!answ}"/>
+        </div>
+    </apex:form>
+</apex:page>
+
+
+
+public class temp {
+    public Integer num1 {get; set;}
+    public Integer num2 {get; set;}
+    public Integer answ {get; set;}
+    public void add() {
+        answ = num1+num2;
+    }
+    public void sub() {
+        answ = num1-num2;
+    }
+    public void div() {
+        answ = num1/num2;
+    }
+    public void mul() {
+        answ = num1*num2;
+    }
+}
