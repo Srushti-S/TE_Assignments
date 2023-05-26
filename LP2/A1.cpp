@@ -1,5 +1,4 @@
 #include <iostream>
-#include <vector>
 #include <queue>
 #include <list>
 #include <map>
@@ -28,20 +27,33 @@ public:
             }
         }
     }
-
-    void BFS(int startNode) 
+   
+   void BFS(int node) 
    {
-        visited[startNode] = true;
-        cout << startNode << " ";
-        for (int i : aList[startNode]) 
+        visited[node] = true;
+        cout << node << " ";
+        BFSUtil(node);
+    }
+
+    void BFSUtil(int node) 
+    {
+        queue<int> q;
+        for (int i : aList[node]) 
         {
             if (!visited[i]) 
             {
                 visited[i] = true;
-                BFS(i);
+                q.push(i);
+                cout << i << " ";
             }
         }
-    }
+        while (!q.empty()) 
+        {
+            int nextNode = q.front();
+            q.pop();
+            BFSUtil(nextNode);
+        }
+    }    
 };
 
 int main() 
