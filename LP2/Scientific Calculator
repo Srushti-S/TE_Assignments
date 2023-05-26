@@ -1,0 +1,137 @@
+Visualforce Page:
+
+<apex:page controller="Calculator"  showHeader="false" sidebar="false">
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <head>
+        <style>
+           .btn-primary{
+              background:blue !important;
+              width:70px;
+          }
+          input[type=checkbox] {
+              /* Double-sized Checkboxes */
+              -ms-transform: scale(2); /* IE */
+              -moz-transform: scale(2); /* FF */
+              -webkit-transform: scale(2); /* Safari and Chrome */
+              -o-transform: scale(2); /* Opera */
+              padding: 10px;
+          }  
+          .message ul,.messageText{
+             color:red;
+          } 
+          .pbBody{
+              overflow:auto;
+          }
+          .apexp{
+              width:360px !important;
+          }
+                  
+     </style>   
+     <script>
+     
+     </script> 
+    </head>
+ <apex:form id="form">
+     <apex:pageBlock title="Calculator">
+         <apex:pageMessages ></apex:pageMessages>
+         Enter First Number<apex:inputText title="Enter Number" label="Enter Number" value="{!Int1}" styleClass="form-control" html-placeholder="Enter value"/> 
+         Enter Second Number<apex:inputText title="Enter Number" label="Enter Number" value="{!Int2}" styleClass="form-control" html-placeholder="Enter value"/>
+         Ouput Number <apex:inputText title="Enter Number" label="Enter Number" value="{!Int3}" html-readonly="true" id="counter" styleClass="form-control"  rendered="{!myValue1==null}" html-placeholder="Output value"/>
+          <apex:inputText title="Enter Number" label="Enter Number" value="{!myValue1}" html-readonly="true" id="counter1" styleClass="form-control" rendered="{!myValue1!=null}"/>
+         Select Operator:-&nbsp;&nbsp;<apex:selectList size="1" value="{!myValue}" multiselect="false" label="Select Operators" styleClass="form-control">
+            <apex:selectOptions value="{!Items}"/>
+        </apex:selectList><br/>
+       <center> <apex:commandButton value="Calculate" action="{!calculate}" styleclass="btn btn-default"/> </center>
+     </apex:pageBlock>
+ </apex:form>
+</apex:page>
+
+Apex Class:
+
+public class Calculator {
+   public Decimal Int1 {get;set;}
+   public Decimal Int2 {get;set;}
+   public Decimal Int3 {get;set;}
+   public String myValue {get;set;}
+   public String myValue1 {get;set;}
+   public integer addition (Integer a,integer b) {
+       return a+b;     
+   }
+   public lead leadmethod (String lName) {
+      Lead objLead = new Lead () ;
+      objLead.LastName = lName;
+      objLead.Company = 'PersiWipro';
+      insert objLead ;
+      return objLead;
+  }
+  public List<SelectOption> getItems() {
+        List<SelectOption> options = new List<SelectOption>();
+        options.add(new SelectOption('',''));
+        options.add(new SelectOption('+','+'));
+        options.add(new SelectOption('-','-'));
+        options.add(new SelectOption('*','*'));
+        options.add(new SelectOption('/','/'));
+        options.add(new SelectOption('X2','X2'));
+          options.add(new SelectOption('abs','abs'));
+          options.add(new SelectOption('Sin','Sin'));
+          options.add(new SelectOption('Cos','Cos'));
+      	  options.add(new SelectOption('Tan','Tan'));
+          options.add(new SelectOption('Sqrt','Sqrt'));
+          
+        return options;
+  }
+  public Calculator () {
+      
+  }
+  public void calculate () {
+      
+      if(myValue == null || myValue =='') {
+           ApexPages.addmessage(new ApexPages.message(ApexPages.severity.Warning,'Please select operator'));myValue1 = null;
+      }
+      else {
+          if(myValue.equals('+')) {
+              Int3 = Int1 + Int2; myValue1 = null;
+          }  
+          if(myValue.equals('+')) {
+              Int3 = Int1 + Int2; myValue1 = null;
+          }  
+          if(myValue.equals('-')) {
+              Int3 = Int1 - Int2; myValue1 = null;
+          } 
+          if(myValue.equals('*')) {
+              Int3 = Int1 * Int2; myValue1 = null;
+          } 
+          if(myValue.equals('/')) {
+              if(Int2==0) {
+                  myValue1='cannot divide by zero';
+              }else {
+              Int3 = Int1 / Int2; myValue1 = null;
+              } 
+          } 
+          if(myValue.equals('X2')) {
+              Int3 = Int1 * Int1; myValue1 = null;
+          } 
+          if(myValue.equals('abs')) {
+              Int3 = Math.abs(Int1);
+          }
+          if(myValue.equals('Sin')) {
+              Int3 = Math.sin(Int1);
+          }
+            if(myValue.equals('Cos')) {
+                          Int3 = Math.cos(Int1);
+                      }
+          if(myValue.equals('Tan')) {
+              Int3 = Math.tan(Int1);
+          }
+
+          if(myValue.equals('Sqrt')) {
+              Int3 = Math.sqrt(Int1);
+          }
+
+      }   
+  }  
+}
