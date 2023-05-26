@@ -1,0 +1,76 @@
+Visualforce page:
+
+<apex:page controller="currencyConverter">
+    <apex:form>
+        <apex:pageBlock>
+            <apex:pageBlockSection>
+                <apex:inputText value="{!amount}" label="Amount" />
+                <apex:selectList value="{!fromCurrency}" label="From Currency">
+                    <apex:selectOptions value="{!currencyOptions}" />
+                </apex:selectList>
+                <apex:selectList value="{!toCurrency}" label="To Currency">
+                    <apex:selectOptions value="{!currencyOptions}" />
+                </apex:selectList>
+                <apex:commandButton value="Convert" action="{!convertCurrency}" />
+            </apex:pageBlockSection>
+            
+            <apex:pageBlockSection rendered="{!convertedAmount != null}">
+                <apex:outputText value="Converted Amount: {!convertedAmount}" />
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>
+
+Apex Class:
+
+public class currencyConverter {
+    public Decimal amount { get; set; }
+    public String fromCurrency { get; set; }
+    public String toCurrency { get; set; }
+    public Decimal convertedAmount { get; set; }
+    
+    public List<SelectOption> currencyOptions { get; set; }
+    
+    public currencyConverter() {
+        fromCurrency = 'USD'; // Default from currency
+        toCurrency = 'EUR'; // Default to currency
+        
+        // Populate the currency options
+        currencyOptions = new List<SelectOption>();
+        currencyOptions.add(new SelectOption('USD', 'USD - US Dollar'));
+        currencyOptions.add(new SelectOption('EUR', 'EUR - Euro'));
+        currencyOptions.add(new SelectOption('GBP', 'GBP - British Pound'));
+        currencyOptions.add(new SelectOption('JPY', 'JPY - Japanese Yen'));
+        currencyOptions.add(new SelectOption('AUD', 'AUD - Australian Dollar'));
+        currencyOptions.add(new SelectOption('CAD', 'CAD - Canadian Dollar'));
+        currencyOptions.add(new SelectOption('INR', 'INR - Indian Rupee'));
+    }
+    
+    public void convertCurrency() {
+        convertedAmount = convertAmount(amount, fromCurrency, toCurrency);
+    }
+    
+    // Manual currency conversion method
+    public Decimal convertAmount(Decimal amount, String fromCurrency, String toCurrency) {
+        Map<String, Decimal> conversionRates = new Map<String, Decimal>();
+        
+        // Define the conversion rates here
+        conversionRates.put('USD', 1.0);
+        conversionRates.put('EUR', 0.85);
+        conversionRates.put('GBP', 0.72);
+        conversionRates.put('JPY', 110.0);
+        conversionRates.put('AUD', 1.35);
+        conversionRates.put('CAD', 1.25);
+        conversionRates.put('INR', 82.58);
+        
+        Decimal fromRate = conversionRates.get(fromCurrency);
+        Decimal toRate = conversionRates.get(toCurrency);
+        
+        if (fromRate != null && toRate != null) {
+            Decimal convertedAmount = (amount / fromRate) * toRate;
+            return Math.round(convertedAmount * 100) / 100; // Round to 2 decimal places
+        }
+        
+        return null; // Conversion rate not found
+    }
+}
