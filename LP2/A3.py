@@ -1,44 +1,31 @@
-# profit   = [15,27,10,100, 150]
-# jobs     = ["j1", "j2", "j3", "j4", "j5"]
-# deadline = [2,3,3,3,4] 
+def printJobScheduling():
+    jobs = []
+    
+    n = int(input("Enter the number of jobs: "))
 
-profit = list()
-jobs = list()
-deadline = list()
+    for i in range(n):
+        jobName = input("Enter the job name: ")
+        deadline = int(input("Enter the job deadline: "))
+        profit = int(input("Enter the job profit: "))
+        jobs.append([jobName, deadline, profit])
 
-n=int(input("Enter total number of jobs: "))
-print("Enter {} job ids:".format(n))
-for i in range(n):
-    jobs.append(input())
+    jobs.sort(key=lambda x: x[2], reverse=True)
 
-print("Enter deadline for {} job ids:".format(n))
-for i in range(n):
-    deadline.append(int(input()))
+    maxDeadline = max(jobs, key=lambda x: x[1])[1]
 
-print("Enter profit for {} job ids:".format(n))
-for i in range(n):
-    profit.append(int(input()))
+    result = ['-1'] * maxDeadline           # Initialize result and slot arrays
+    slot = [False] * maxDeadline
 
-profitNJobs = list(zip(profit,jobs,deadline))
-profitNJobs = sorted(profitNJobs, key = lambda x: x[0], reverse = True)
-slot = []
-for _ in range(len(jobs)):
-    slot.append(0)
-
-profit = 0
-ans = []
-
-for i in range(len(jobs)):
-    ans.append('null')
-
-for i in range(len(jobs)):
-        job = profitNJobs[i]
-        for j in range(job[2], 0, -1):      #check if slot is occupied
-            if slot[j] == 0:
-                ans[j] = job[1]
-                profit += job[0]
-                slot[j] = 1
+    maxProfit = 0
+    for i in range(len(jobs)):
+        for j in range(min(maxDeadline - 1, jobs[i][1] - 1), -1, -1):       # Find a free slot for this job
+            if slot[j] is False:
+                slot[j] = True
+                result[j] = jobs[i][0]
+                maxProfit += jobs[i][2]
                 break
-        
-print("Maximum profit sequence of jobs => ",ans[1:])
-print("Profit => ",profit)
+
+    print("Job Sequence:", result)
+    print("Maximum Profit:", maxProfit)
+
+printJobScheduling()
