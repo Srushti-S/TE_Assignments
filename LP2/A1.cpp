@@ -30,22 +30,15 @@ public:
     }
 
     void BFS(int startNode) 
-    {
-        queue<int> q;
-        q.push(startNode);
+   {
         visited[startNode] = true;
-        while (!q.empty()) 
+        cout << startNode << " ";
+        for (int i : aList[startNode]) 
         {
-            int node = q.front();
-            q.pop();
-            cout << node << " ";
-            for (int i : aList[node]) 
+            if (!visited[i]) 
             {
-                if (!visited[i]) 
-                {
-                    visited[i] = true;
-                    q.push(i);
-                }
+                visited[i] = true;
+                BFS(i);
             }
         }
     }
