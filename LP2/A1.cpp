@@ -1,95 +1,83 @@
 #include <iostream>
+#include <vector>
+#include <queue>
 #include <list>
 #include <map>
-#include <queue>
 using namespace std;
 
-class GraphDFSBFS
+class Graph 
 {
 public:
     map<int, list<int>> aList;
     map<int, bool> visited;
-    queue<int> q;
 
-    void Edge(int src, int dest)
+    void addEdge(int src, int dest) 
     {
         aList[src].push_back(dest);
-        aList[dest].push_back(src);
     }
 
-    void DFS(int node)
+    void DFS(int node) 
     {
         visited[node] = true;
         cout << node << " ";
-        for (int i : aList[node])
+        for (int i : aList[node]) 
         {
-            if (!visited[i])
+            if (!visited[i]) 
             {
                 DFS(i);
             }
         }
     }
 
-    void BFS()
+    void BFS(int startNode) 
     {
-        if (q.empty())
+        queue<int> q;
+        q.push(startNode);
+        visited[startNode] = true;
+        while (!q.empty()) 
         {
-            return;
-        }
-        int node = q.front();
-        q.pop();
-        cout << node << " ";
-        for (int i : aList[node])
-        {
-            if (!visited[i])
+            int node = q.front();
+            q.pop();
+            cout << node << " ";
+            for (int i : aList[node]) 
             {
-                visited[i] = true;
-                q.push(i);
+                if (!visited[i]) 
+                {
+                    visited[i] = true;
+                    q.push(i);
+                }
             }
         }
-        BFS();
     }
 };
 
-int main()
+int main() 
 {
-    GraphDFSBFS g;
-    int n, s, d, ch;
-    do
+    Graph g;
+    int n, src, dest;
+    
+    cout << "Enter the number of edges: ";
+    cin >> n;
+
+    cout << "Enter the edges (source destination):\n";
+    for (int i = 0; i < n; i++) 
     {
-        cout << "\n--------Menu----------";
-        cout << "\n1. Create \n2. DFS \n3. BFS: \n4. Exit \nEnter your choice:";
-        cin >> ch;
-        if (ch == 1)
-        {
-            cout << "\nEnter total number of edges: ";
-            cin >> n;
-            for (int i = 0; i < n; i++)
-            {
-                cout << "\n\tEnter first vertex: ";
-                cin >> s;
-                cout << "\tEnter second vertex: ";
-                cin >> d;
-                g.Edge(s, d);
-                g.Edge(d, s);
-            }
-        }
-        else if (ch == 2)
-        {
-            cout << "\nDFS on the given graph is :";
-            g.DFS(0);
-        }
-        else if (ch == 3)
-        {
-            cout << "\nBFS on the given graph is: ";
-            g.q.push(0);
-            g.visited[0] = true;
-            g.BFS();
-        }
-        else
-        {
-            cout << "\nProgram exited successfully!";
-        }
-    } while (ch < 4);
+        cin >> src >> dest;
+        g.addEdge(src, dest);
+    }
+
+    int startNode;
+    cout << "Enter the starting node: ";
+    cin >> startNode;
+
+    cout << "DFS traversal: ";
+    g.DFS(startNode);
+    cout << endl;
+
+    cout << "BFS traversal: ";
+    g.visited.clear();
+    g.BFS(startNode);
+    cout << endl;
+
     return 0;
 }
