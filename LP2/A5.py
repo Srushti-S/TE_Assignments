@@ -125,6 +125,5 @@ def chat():
     print("Hey there! I am Chitti at your service")
     chat = Chat(pairs)
     chat.converse()
-
-if __name__== "__main__":
-    chat()
+    
+chat()
